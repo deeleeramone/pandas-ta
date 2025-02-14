@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pandas-ta-openbb"
+version = "0.4.20"
+description = "Fork of pandas-ta for use with NumPy 2 and OpenBB."
+authors = ["Kevin Johnson <appliedmathkj@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [{ include = "pandas_ta" }]
+
+[tool.poetry.dependencies]
+python = "^3.9,<3.13"
+numba = ">=0.59.0"
+numpy = ">=1.26.4"
+pandas = ">=2.2.0"
+scipy = ">=1.13"
+statsmodels = "^0.14.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

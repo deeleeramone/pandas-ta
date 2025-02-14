@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
+import importlib
 from importlib.util import find_spec
 from pathlib import Path
-from pkg_resources import get_distribution, DistributionNotFound
 
 from pandas_ta._typing import Dict, IntFloat, ListStr
 
-_dist = get_distribution("pandas_ta")
+_dist = str(importlib.metadata.distribution("pandas-ta-openbb"))
+_version = importlib.metadata.version("pandas-ta-openbb")
 try:
     # Normalize case for Windows systems
-    _here = Path(_dist.location) / __file__
+    _here = Path(_dist) / __file__
     if not _here.exists():
         # not installed, but there is another version that *is*
-        raise DistributionNotFound
-except DistributionNotFound:
+        raise ImportError
+except ImportError:
     __version__ = "Please install this project with setup.py"
 
-version = __version__ = _dist.version
+version = __version__ = _version
 
 Imports: Dict[str, bool] = {
     "alphaVantage-api": find_spec("alphaVantageAPI") is not None,
@@ -40,57 +41,177 @@ Imports: Dict[str, bool] = {
 # Will find a dynamic solution later.
 Category: Dict[str, ListStr] = {
     # Candles
-    "candles": [
-        "cdl_pattern", "cdl_z", "ha"
-    ],
+    "candles": ["cdl_pattern", "cdl_z", "ha"],
     # Cycles
     "cycles": ["ebsw", "reflex"],
     # Momentum
     "momentum": [
-        "ao", "apo", "bias", "bop", "brar", "cci", "cfo", "cg", "cmo",
-        "coppock", "crsi", "cti", "er", "eri", "exhc", "fisher", "inertia",
-        "kdj", "kst", "macd", "mom", "pgo", "ppo", "psl", "qqe", "roc",
-        "rsi", "rsx", "rvgi", "slope", "smc", "smi", "squeeze", "squeeze_pro",
-        "stc", "stoch", "stochf", "stochrsi", "tmo", "trix", "tsi", "uo",
-        "willr"
+        "ao",
+        "apo",
+        "bias",
+        "bop",
+        "brar",
+        "cci",
+        "cfo",
+        "cg",
+        "cmo",
+        "coppock",
+        "crsi",
+        "cti",
+        "er",
+        "eri",
+        "exhc",
+        "fisher",
+        "inertia",
+        "kdj",
+        "kst",
+        "macd",
+        "mom",
+        "pgo",
+        "ppo",
+        "psl",
+        "qqe",
+        "roc",
+        "rsi",
+        "rsx",
+        "rvgi",
+        "slope",
+        "smc",
+        "smi",
+        "squeeze",
+        "squeeze_pro",
+        "stc",
+        "stoch",
+        "stochf",
+        "stochrsi",
+        "tmo",
+        "trix",
+        "tsi",
+        "uo",
+        "willr",
     ],
     # Overlap
     "overlap": [
-        "alligator", "alma", "dema", "ema", "fwma", "hilo", "hl2", "hlc3",
-        "hma", "hwma", "ichimoku", "jma", "kama", "linreg", "mama",
-        "mcgd", "midpoint", "midprice", "ohlc4", "pivots", "pwma", "rma",
-        "sinwma", "sma", "smma", "ssf", "ssf3", "supertrend", "swma", "t3",
-        "tema", "trima", "vidya", "wcp", "wma", "zlma"
+        "alligator",
+        "alma",
+        "dema",
+        "ema",
+        "fwma",
+        "hilo",
+        "hl2",
+        "hlc3",
+        "hma",
+        "hwma",
+        "ichimoku",
+        "jma",
+        "kama",
+        "linreg",
+        "mama",
+        "mcgd",
+        "midpoint",
+        "midprice",
+        "ohlc4",
+        "pivots",
+        "pwma",
+        "rma",
+        "sinwma",
+        "sma",
+        "smma",
+        "ssf",
+        "ssf3",
+        "supertrend",
+        "swma",
+        "t3",
+        "tema",
+        "trima",
+        "vidya",
+        "wcp",
+        "wma",
+        "zlma",
     ],
     # Performance
     "performance": ["log_return", "percent_return"],
     # Statistics
     "statistics": [
-        "entropy", "kurtosis", "mad", "median", "quantile", "skew", "stdev",
-        "tos_stdevall", "variance", "zscore"
+        "entropy",
+        "kurtosis",
+        "mad",
+        "median",
+        "quantile",
+        "skew",
+        "stdev",
+        "tos_stdevall",
+        "variance",
+        "zscore",
     ],
     # Transform
     "transform": ["cube", "ifisher", "remap"],
     # Trend
     "trend": [
-        "adx", "alphatrend", "amat", "aroon", "chop", "cksp", "decay",
-        "decreasing", "dpo", "ht_trendline", "increasing", "long_run",
-        "psar", "qstick", "rwi", "short_run", "trendflex", "tsignals",
-        "vhf", "vortex", "xsignals", "zigzag"
+        "adx",
+        "alphatrend",
+        "amat",
+        "aroon",
+        "chop",
+        "cksp",
+        "decay",
+        "decreasing",
+        "dpo",
+        "ht_trendline",
+        "increasing",
+        "long_run",
+        "psar",
+        "qstick",
+        "rwi",
+        "short_run",
+        "trendflex",
+        "tsignals",
+        "vhf",
+        "vortex",
+        "xsignals",
+        "zigzag",
     ],
     # Volatility
     "volatility": [
-        "aberration", "accbands", "atr", "atrts", "bbands", "chandelier_exit",
-        "donchian", "hwc", "kc", "massi", "natr", "pdist", "rvi", "thermo",
-        "true_range", "ui"
+        "aberration",
+        "accbands",
+        "atr",
+        "atrts",
+        "bbands",
+        "chandelier_exit",
+        "donchian",
+        "hwc",
+        "kc",
+        "massi",
+        "natr",
+        "pdist",
+        "rvi",
+        "thermo",
+        "true_range",
+        "ui",
     ],
-
     # Volume.
     # Note: "vp" or "Volume Profile" is excluded since it does not return a Time Series
     "volume": [
-        "ad", "adosc", "aobv", "cmf", "efi", "eom", "kvo", "mfi", "nvi",
-        "obv", "pvi", "pvo", "pvol", "pvr", "pvt", "vhm", "vwap", "vwma",
-        "wb_tsv"
+        "ad",
+        "adosc",
+        "aobv",
+        "cmf",
+        "efi",
+        "eom",
+        "kvo",
+        "mfi",
+        "nvi",
+        "obv",
+        "pvi",
+        "pvo",
+        "pvol",
+        "pvr",
+        "pvt",
+        "vhm",
+        "vwap",
+        "vwma",
+        "wb_tsv",
     ],
 }
 
@@ -99,17 +220,27 @@ CANDLE_AGG: Dict[str, str] = {
     "high": "max",
     "low": "min",
     "close": "last",
-    "volume": "sum"
+    "volume": "sum",
 }
 
 # https://www.worldtimezone.com/markets24.php
 EXCHANGE_TZ: Dict[str, IntFloat] = {
-    "NZSX": 12, "ASX": 11,
-    "TSE": 9, "HKE": 8, "SSE": 8, "SGX": 8,
-    "NSE": 5.5, "DIFX": 4, "RTS": 3,
-    "JSE": 2, "FWB": 1, "LSE": 1,
-    "BMF": -2, "NYSE": -4, "TSX": -4,
-    "GENR": 0 # Generated Data
+    "NZSX": 12,
+    "ASX": 11,
+    "TSE": 9,
+    "HKE": 8,
+    "SSE": 8,
+    "SGX": 8,
+    "NSE": 5.5,
+    "DIFX": 4,
+    "RTS": 3,
+    "JSE": 2,
+    "FWB": 1,
+    "LSE": 1,
+    "BMF": -2,
+    "NYSE": -4,
+    "TSX": -4,
+    "GENR": 0,  # Generated Data
 }
 
 RATE: Dict[str, IntFloat] = {
