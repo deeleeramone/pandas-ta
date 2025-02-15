@@ -2,8 +2,16 @@
   <a href="https://www.pandas-ta.dev"><img src="images/ta-logo.png" alt="Pandas TA"></a>
 </p>
 
+### **This is a fork of the develop branch for the purpose of distributing a wheel compatible with Numpy 2.**
+
+```sh
+pip install pandas-ta-openbb
+```
+
+
 # Pandas TA
 ### A Comprehensive Python Technical Analysis Library for Traders and Investors
+
 
 [![license](https://img.shields.io/github/license/twopirllc/pandas-ta)](#license)
 [![Python Version](https://img.shields.io/pypi/pyversions/pandas-ta?style=flat)](https://pypi.org/project/pandas_ta/)
