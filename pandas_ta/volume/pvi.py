@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
-from numba import njit
-from numpy import empty, float64, zeros_like
+from numpy import float64, zeros_like
 from pandas import DataFrame, Series
+from pandas_ta._compat import njit
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.utils import (
-    v_bool,
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series
-)
+from pandas_ta.utils import v_bool, v_mamode, v_offset, v_pos_default, v_series
 
 
 @njit(cache=True)
@@ -28,11 +22,15 @@ def nb_pvi(np_close, np_volume, initial):
     return result
 
 
-
 def pvi(
-    close: Series, volume: Series, length: Int = None, initial: Int = None,
-    mamode: str = None, overlay: bool = None, offset: Int = None,
-    **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    length: Int = None,
+    initial: Int = None,
+    mamode: str = None,
+    overlay: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Positive Volume Index (PVI)
 
@@ -89,20 +87,20 @@ def pvi(
 
     # Fill
     if "fillna" in kwargs:
-        pvi.fillna(kwargs["fillna"], inplace=True)
-        pvi_ma.fillna(kwargs["fillna"], inplace=True)
+        pvi = pvi.fillna(kwargs["fillna"])
+        pvi_ma = pvi_ma.fillna(kwargs["fillna"])
     if "fill_method" in kwargs:
-        pvi.fillna(method=kwargs["fill_method"], inplace=True)
-        pvi_ma.fillna(method=kwargs["fill_method"], inplace=True)
+        pvi = pvi.fillna(method=kwargs["fill_method"])
+        pvi_ma = pvi_ma.fillna(method=kwargs["fill_method"])
 
     # Name and Category
     _mode = mamode.lower()[0] if len(mamode) else ""
     _props = f"{_mode}_{length}"
-    pvi.name = f"PVI"
+    pvi.name = "PVI"
     pvi_ma.name = f"PVI{_props}"
     pvi.category = pvi_ma.category = "volume"
 
-    data = { pvi.name: pvi}
+    data = {pvi.name: pvi}
     if np_close.size > length + 1:
         data[pvi_ma.name] = pvi_ma
     df = DataFrame(data, index=close.index)

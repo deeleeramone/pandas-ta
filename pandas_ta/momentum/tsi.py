@@ -10,16 +10,20 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_scalar,
-    v_series
+    v_series,
 )
 
 
-
 def tsi(
-    close: Series, fast: Int = None, slow: Int = None,
-    signal: Int = None, scalar: IntFloat = None,
-    mamode: str = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    signal: Int = None,
+    scalar: IntFloat = None,
+    mamode: str = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """True Strength Index (TSI)
 
@@ -92,8 +96,8 @@ def tsi(
 
     # Fill
     if "fillna" in kwargs:
-        tsi.fillna(kwargs["fillna"], inplace=True)
-        tsi_signal.fillna(kwargs["fillna"], inplace=True)
+        tsi = tsi.fillna(kwargs["fillna"])
+        tsi_signal = tsi_signal.fillna(kwargs["fillna"])
 
     # Name and Category
     tsi.name = f"TSI_{fast}_{slow}_{signal}"

@@ -143,7 +143,7 @@ def test_pvi(df):
 
     result = ta.pvi(df.close, df.volume, length=10, overlay=True)
     assert isinstance(result, DataFrame)
-    assert df.close.iloc[0] == result.iloc[0,0]
+    assert df.close.iloc[0] == result.iloc[0, 0]
 
 
 def test_pvol(df):
@@ -184,10 +184,16 @@ def test_vp(df):
     assert result.name == "VP_10"
 
 
-@mark.parametrize("bands,dtype", [
-    (None, Series), ([1], DataFrame), ([-1, 1], DataFrame),
-    ([1, 2, 4, 8], DataFrame), ([1, 2.5, 4.13], DataFrame),
-])
+@mark.parametrize(
+    "bands,dtype",
+    [
+        (None, Series),
+        ([1], DataFrame),
+        ([-1, 1], DataFrame),
+        ([1, 2, 4, 8], DataFrame),
+        ([1, 2.5, 4.13], DataFrame),
+    ],
+)
 def test_vwap(df, bands, dtype):
     result = ta.vwap(df.high, df.low, df.close, df.volume, bands=bands)
     assert isinstance(result, dtype)
@@ -219,8 +225,13 @@ def test_ext_adosc(df):
 def test_ext_aobv(df):
     df.ta.aobv(append=True)
     columns = [
-        "OBV", "OBV_min_2", "OBV_max_2", "OBVe_4",
-        "OBVe_12", "AOBV_LR_2", "AOBV_SR_2"
+        "OBV",
+        "OBV_min_2",
+        "OBV_max_2",
+        "OBVe_4",
+        "OBVe_12",
+        "AOBV_LR_2",
+        "AOBV_SR_2",
     ]
     assert list(df.columns[-7:]) == columns
 
@@ -254,8 +265,7 @@ def test_ext_nvi(df):
     df.ta.nvi(append=True)
     assert df.columns[-1] == "NVI_1"
 
-
-# def test_ext_pvi(df):
+    # def test_ext_pvi(df):
     df.ta.pvi(length=10, append=True)
     assert list(df.columns[-2:]) == ["PVI", "PVIe_10"]
 

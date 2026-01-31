@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
 from numpy import isnan, nan, zeros_like
-from numba import njit
 from pandas import DataFrame, Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.momentum import rsi
 from pandas_ta.volatility import atr
 from pandas_ta.volume.mfi import mfi
-from pandas_ta.utils import (
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_str,
-    v_talib
-)
-
+from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series, v_str, v_talib
 
 
 @njit(cache=True)
@@ -39,14 +31,22 @@ def nb_alpha(low_atr, high_atr, momo_threshold):
 
 
 def alphatrend(
-    open_: Series, high: Series, low: Series, close: Series,
-    volume: Series = None, src: str = None,
-    length: int = None, multiplier: IntFloat = None,
-    threshold: IntFloat = None, lag: Int = None,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series = None,
+    src: str = None,
+    length: int = None,
+    multiplier: IntFloat = None,
+    threshold: IntFloat = None,
+    lag: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ):
-    """ Alpha Trend (alphatrend)
+    """Alpha Trend (alphatrend)
 
     Alpha Trend attemps to solve the problems of Magic Trend. For instance, it
     tries to ilter out sideways market conditions and yield more accurate
@@ -104,8 +104,7 @@ def alphatrend(
 
     # Calculate
     atr_ = atr(
-        high=high, low=low, close=close, length=length,
-        mamode=mamode, talib=mode_tal
+        high=high, low=low, close=close, length=length, mamode=mamode, talib=mode_tal
     )
 
     if atr_ is None or all(isnan(atr_)):
@@ -119,8 +118,12 @@ def alphatrend(
         momo = rsi(close=_src[src], length=length, mamode=mamode, talib=mode_tal)
     else:
         momo = mfi(
-            high=high, low=low, close=close, volume=volume,
-            length=length, talib=mode_tal
+            high=high,
+            low=low,
+            close=close,
+            volume=volume,
+            length=length,
+            talib=mode_tal,
         )
 
     if momo is None:
@@ -143,8 +146,8 @@ def alphatrend(
 
     # Fill
     if "fillna" in kwargs:
-        at.fillna(kwargs["fillna"], inplace=True)
-        atl.fillna(kwargs["fillna"], inplace=True)
+        at = at.fillna(kwargs["fillna"])
+        atl = atl.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{multiplier}_{threshold}"

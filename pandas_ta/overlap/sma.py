@@ -1,29 +1,25 @@
 # -*- coding: utf-8 -*-
 from numpy import convolve, ones
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    nb_prepend,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import nb_prepend, v_offset, v_pos_default, v_series, v_talib
 
 
 # Fast SMA Options: https://github.com/numba/numba/issues/4119
 @njit(cache=True)
 def nb_sma(x, n):
-    result = convolve(ones(n) / n, x)[n - 1:1 - n]
+    result = convolve(ones(n) / n, x)[n - 1 : 1 - n]
     return nb_prepend(result, n - 1)
 
 
 def sma(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Simple Moving Average (SMA)
 
@@ -65,6 +61,7 @@ def sma(
     # Calculate
     if Imports["talib"] and mode_tal and length > 1:
         from talib import SMA
+
         sma = SMA(close, length)
     else:
         np_close = close.to_numpy()
@@ -77,7 +74,7 @@ def sma(
 
     # Fill
     if "fillna" in kwargs:
-        sma.fillna(kwargs["fillna"], inplace=True)
+        sma = sma.fillna(kwargs["fillna"])
 
     # Name and Category
     sma.name = f"SMA_{length}"

@@ -5,10 +5,13 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import v_offset, v_series, v_talib
 
 
-
 def hlc3(
-    high: Series, low: Series, close: Series, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """HLC3
 
@@ -40,6 +43,7 @@ def hlc3(
     # Calculate
     if Imports["talib"] and mode_tal and close.size:
         from talib import TYPPRICE
+
         hlc3 = TYPPRICE(high, low, close)
     else:
         avg = (high.to_numpy() + low.to_numpy() + close.to_numpy()) / 3.0
@@ -51,7 +55,7 @@ def hlc3(
 
         # Fill
         if "fillna" in kwargs:
-            hlc3.fillna(kwargs["fillna"], inplace=True)
+            hlc3 = hlc3.fillna(kwargs["fillna"])
 
     # Name and Category
     hlc3.name = "HLC3"

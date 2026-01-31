@@ -6,11 +6,14 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series
 from .atr import atr
 
 
-
 def aberration(
-    high: Series, low: Series, close: Series,
-    length: Int = None, atr_length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    atr_length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Aberration (ABER)
 
@@ -64,10 +67,10 @@ def aberration(
 
     # Fill
     if "fillna" in kwargs:
-        zg.fillna(kwargs["fillna"], inplace=True)
-        sg.fillna(kwargs["fillna"], inplace=True)
-        xg.fillna(kwargs["fillna"], inplace=True)
-        atr_.fillna(kwargs["fillna"], inplace=True)
+        zg = zg.fillna(kwargs["fillna"])
+        sg = sg.fillna(kwargs["fillna"])
+        xg = xg.fillna(kwargs["fillna"])
+        atr_ = atr_.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{atr_length}"

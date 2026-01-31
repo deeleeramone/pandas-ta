@@ -2,20 +2,18 @@
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    non_zero_range,
-    v_offset,
-    v_scalar,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import non_zero_range, v_offset, v_scalar, v_series, v_talib
 
 
 def bop(
-    open_: Series, high: Series, low: Series, close: Series,
-    scalar: IntFloat = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    scalar: IntFloat = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Balance of Power (BOP)
 
@@ -52,6 +50,7 @@ def bop(
     # Calculate
     if Imports["talib"] and mode_tal and close.size:
         from talib import BOP
+
         bop = BOP(open_, high, low, close)
     else:
         high_low_range = non_zero_range(high, low)
@@ -64,10 +63,10 @@ def bop(
 
     # Fill
     if "fillna" in kwargs:
-        bop.fillna(kwargs["fillna"], inplace=True)
+        bop = bop.fillna(kwargs["fillna"])
 
     # Name and Category
-    bop.name = f"BOP"
+    bop.name = "BOP"
     bop.category = "momentum"
 
     return bop

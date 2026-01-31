@@ -11,15 +11,19 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def bbands(
-    close: Series, length: Int = None, std: IntFloat = None, ddof: Int = 0,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    std: IntFloat = None,
+    ddof: Int = 0,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Bollinger Bands (BBANDS)
 
@@ -64,6 +68,7 @@ def bbands(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import BBANDS
+
         upper, mid, lower = BBANDS(close, length, std, std, tal_ma(mamode))
     else:
         std_dev = stdev(close=close, length=length, ddof=ddof, talib=mode_tal)
@@ -88,11 +93,11 @@ def bbands(
 
     # Fill
     if "fillna" in kwargs:
-        lower.fillna(kwargs["fillna"], inplace=True)
-        mid.fillna(kwargs["fillna"], inplace=True)
-        upper.fillna(kwargs["fillna"], inplace=True)
-        bandwidth.fillna(kwargs["fillna"], inplace=True)
-        percent.fillna(kwargs["fillna"], inplace=True)
+        lower = lower.fillna(kwargs["fillna"])
+        mid = mid.fillna(kwargs["fillna"])
+        upper = upper.fillna(kwargs["fillna"])
+        bandwidth = bandwidth.fillna(kwargs["fillna"])
+        percent = percent.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{std}"
@@ -109,7 +114,7 @@ def bbands(
         mid.name: mid,
         upper.name: upper,
         bandwidth.name: bandwidth,
-        percent.name: percent
+        percent.name: percent,
     }
     df = DataFrame(data, index=close.index)
     df.name = f"BBANDS{_props}"

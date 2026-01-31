@@ -4,22 +4,25 @@ from numpy import convolve, maximum, nan, ones, roll, where
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.overlap import hlc3
 from pandas_ta.utils import (
-    nb_non_zero_range,
     v_drift,
     v_offset,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def mfi(
-    high: Series, low: Series, close: Series, volume: Series,
-    length: Int = None, talib: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series,
+    length: Int = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Money Flow Index (MFI)
 
@@ -64,6 +67,7 @@ def mfi(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import MFI
+
         mfi = MFI(high, low, close, volume, length)
     else:
         m, _ones = close.size, ones(length)
@@ -85,7 +89,7 @@ def mfi(
 
     # Fill
     if "fillna" in kwargs:
-        mfi.fillna(kwargs["fillna"], inplace=True)
+        mfi = mfi.fillna(kwargs["fillna"])
 
     # Name and Category
     mfi.name = f"MFI_{length}"

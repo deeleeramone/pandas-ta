@@ -6,10 +6,12 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from .sma import sma
 
 
-
 def trima(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Triangular Moving Average (TRIMA)
 
@@ -48,6 +50,7 @@ def trima(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import TRIMA
+
         trima = TRIMA(close, length)
     else:
         half_length = round(0.5 * (length + 1))
@@ -60,7 +63,7 @@ def trima(
 
     # Fill
     if "fillna" in kwargs:
-        trima.fillna(kwargs["fillna"], inplace=True)
+        trima = trima.fillna(kwargs["fillna"])
 
     # Name and Category
     trima.name = f"TRIMA_{length}"

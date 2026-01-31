@@ -5,11 +5,14 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import non_zero_range, v_drift, v_offset, v_series
 
 
-
 def pdist(
-    open_: Series, high: Series, low: Series, close: Series,
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
     drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Price Distance (PDIST)
 
@@ -57,7 +60,7 @@ def pdist(
 
     # Fill
     if "fillna" in kwargs:
-        pdist.fillna(kwargs["fillna"], inplace=True)
+        pdist = pdist.fillna(kwargs["fillna"])
 
     # Name and Category
     pdist.name = "PDIST"

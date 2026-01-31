@@ -4,11 +4,7 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_series
 
 
-
-def hl2(
-    high: Series, low: Series,
-    offset: Int = None, **kwargs: DictLike
-) -> Series:
+def hl2(high: Series, low: Series, offset: Int = None, **kwargs: DictLike) -> Series:
     """HL2
 
     HL2 is the midpoint/average of high and low.
@@ -43,7 +39,7 @@ def hl2(
 
         # Fill
         if "fillna" in kwargs:
-            hl2.fillna(kwargs["fillna"], inplace=True)
+            hl2 = hl2.fillna(kwargs["fillna"])
 
     # Name and Category
     hl2.name = "HL2"

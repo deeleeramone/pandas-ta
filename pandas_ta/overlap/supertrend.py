@@ -7,13 +7,16 @@ from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series
 from pandas_ta.volatility import atr
 
 
-
 def supertrend(
-    high: Series, low: Series, close: Series,
-    length: Int = None, atr_length: Int = None,
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    atr_length: Int = None,
     multiplier: IntFloat = None,
-    atr_mamode : str = None,
-    offset: Int = None, **kwargs: DictLike
+    atr_mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Supertrend (supertrend)
 
@@ -93,7 +96,7 @@ def supertrend(
         f"SUPERT{_props}": trend,
         f"SUPERTd{_props}": dir_,
         f"SUPERTl{_props}": long,
-        f"SUPERTs{_props}": short
+        f"SUPERTs{_props}": short,
     }
     df = DataFrame(data, index=close.index)
 
@@ -106,6 +109,6 @@ def supertrend(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     return df

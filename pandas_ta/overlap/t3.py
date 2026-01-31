@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from numpy import isnan
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.maps import Imports
@@ -7,10 +6,13 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from .ema import ema
 
 
-
 def t3(
-    close: Series, length: Int = None, a: IntFloat = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    a: IntFloat = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Tim Tillson's T3 Moving Average (T3)
 
@@ -50,6 +52,7 @@ def t3(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import T3
+
         t3 = T3(close, length, a)
     else:
         c1 = -a * a**2
@@ -71,7 +74,7 @@ def t3(
 
     # Fill
     if "fillna" in kwargs:
-        t3.fillna(kwargs["fillna"], inplace=True)
+        t3 = t3.fillna(kwargs["fillna"])
 
     # Name and Category
     t3.name = f"T3_{length}_{a}"

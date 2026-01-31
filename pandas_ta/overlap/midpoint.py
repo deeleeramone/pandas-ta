@@ -5,10 +5,12 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 
 
-
 def midpoint(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Midpoint
 
@@ -44,6 +46,7 @@ def midpoint(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import MIDPOINT
+
         midpoint = MIDPOINT(close, length)
     else:
         lowest = close.rolling(length, min_periods=min_periods).min()
@@ -56,7 +59,7 @@ def midpoint(
 
     # Fill
     if "fillna" in kwargs:
-        midpoint.fillna(kwargs["fillna"], inplace=True)
+        midpoint = midpoint.fillna(kwargs["fillna"])
 
     # Name and Category
     midpoint.name = f"MIDPOINT_{length}"

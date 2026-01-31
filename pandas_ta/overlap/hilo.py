@@ -6,11 +6,15 @@ from pandas_ta.ma import ma
 from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series
 
 
-
 def hilo(
-    high: Series, low: Series, close: Series,
-    high_length: Int = None, low_length: Int = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    high_length: Int = None,
+    low_length: Int = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Gann HiLo Activator(HiLo)
 
@@ -86,17 +90,13 @@ def hilo(
 
     # Fill
     if "fillna" in kwargs:
-        hilo.fillna(kwargs["fillna"], inplace=True)
-        long.fillna(kwargs["fillna"], inplace=True)
-        short.fillna(kwargs["fillna"], inplace=True)
+        hilo = hilo.fillna(kwargs["fillna"])
+        long = long.fillna(kwargs["fillna"])
+        short = short.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{high_length}_{low_length}"
-    data = {
-        f"HILO{_props}": hilo,
-        f"HILOl{_props}": long,
-        f"HILOs{_props}": short
-    }
+    data = {f"HILO{_props}": hilo, f"HILOl{_props}": long, f"HILOs{_props}": short}
     df = DataFrame(data, index=close.index)
 
     df.name = f"HILO{_props}"

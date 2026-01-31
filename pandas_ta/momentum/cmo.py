@@ -9,15 +9,18 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def cmo(
-    close: Series, length: Int = None, scalar: IntFloat = None,
-    talib: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Chande Momentum Oscillator (CMO)
 
@@ -57,6 +60,7 @@ def cmo(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import CMO
+
         cmo = CMO(close, length)
     else:
         mom = close.diff(drift)
@@ -78,7 +82,7 @@ def cmo(
 
     # Fill
     if "fillna" in kwargs:
-        cmo.fillna(kwargs["fillna"], inplace=True)
+        cmo = cmo.fillna(kwargs["fillna"])
 
     # Name and Category
     cmo.name = f"CMO_{length}"

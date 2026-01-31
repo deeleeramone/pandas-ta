@@ -6,29 +6,14 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series
 
 # Available MAs for zlma
-from .dema import dema
-from .ema import ema
-from .fwma import fwma
-from .hma import hma
-from .linreg import linreg
-from .midpoint import midpoint
-from .pwma import pwma
-from .rma import rma
-from .sinwma import sinwma
-from .sma import sma
-from .ssf import ssf
-from .swma import swma
-from .t3 import t3
-from .tema import tema
-from .trima import trima
-from .vidya import vidya
-from .wma import wma
-
 
 
 def zlma(
-    close: Series, length: Int = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Zero Lag Moving Average (ZLMA)
 
@@ -60,8 +45,23 @@ def zlma(
 
     mamode = v_mamode(mamode, "ema")
     supported_mas = [
-        "dema", "ema", "fwma", "hma", "linreg", "midpoint", "pwma", "rma",
-        "sinwma", "sma", "ssf", "swma", "t3", "tema", "trima", "vidya", "wma"
+        "dema",
+        "ema",
+        "fwma",
+        "hma",
+        "linreg",
+        "midpoint",
+        "pwma",
+        "rma",
+        "sinwma",
+        "sma",
+        "ssf",
+        "swma",
+        "t3",
+        "tema",
+        "trima",
+        "vidya",
+        "wma",
     ]
 
     if mamode not in supported_mas:
@@ -88,7 +88,7 @@ def zlma(
 
     # Fill
     if "fillna" in kwargs:
-        zlma.fillna(kwargs["fillna"], inplace=True)
+        zlma = zlma.fillna(kwargs["fillna"])
 
     # Name and Category
     zlma.name = f"ZL_{zlma.name}"

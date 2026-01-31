@@ -5,9 +5,10 @@ from pandas_ta._typing import Int
 from pandas_ta.utils import v_drift, v_series
 
 
-
 def pvr(
-    close: Series, volume: Series, drift: Int = None,
+    close: Series,
+    volume: Series,
+    drift: Int = None,
 ) -> Series:
     """Price Volume Rank
 
@@ -49,7 +50,7 @@ def pvr(
     pvr.loc[(close_diff < 0) & (volume_diff < 0)] = 4
 
     # Name and Category
-    pvr.name = f"PVR"
+    pvr.name = "PVR"
     pvr.category = "volume"
 
     return pvr

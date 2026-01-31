@@ -6,10 +6,12 @@ from pandas_ta.statistics import stdev
 from pandas_ta.utils import v_lowerbound, v_offset, v_series
 
 
-
 def zscore(
-    close: Series, length: Int = None, std: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    std: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Rolling Z Score
 
@@ -48,7 +50,7 @@ def zscore(
 
     # Fill
     if "fillna" in kwargs:
-        zscore.fillna(kwargs["fillna"], inplace=True)
+        zscore = zscore.fillna(kwargs["fillna"])
 
     # Name and Category
     zscore.name = f"ZS_{length}"

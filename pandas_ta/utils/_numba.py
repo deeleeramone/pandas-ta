@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 from numpy import (
     append,
-    arange,
     array,
     empty_like,
     float64,
     int64,
     isnan,
-    maximum,
     nan,
     roll,
-    where,
-    zeros_like
+    zeros_like,
 )
-from numba import njit
+from pandas_ta._compat import njit
 
-from pandas_ta._typing import Array, Int, IntFloat
 
 __all__ = [
     "nb_ffill",
@@ -25,7 +21,6 @@ __all__ = [
     "nb_rolling",
     "nb_shift",
 ]
-
 
 
 # Numba version of ffill()
@@ -59,22 +54,22 @@ def nb_idiff(x, k):
 
 # Prepend n values, typically np.nan, to array x.
 @njit(cache=True)
-def nb_prenan(x, n, value = nan):
+def nb_prenan(x, n, value=nan):
     if n > 0:
-        x[:n - 1] = value
+        x[: n - 1] = value
         return x
     return x
 
 
 # Prepend n values, typically np.nan, to array x.
 @njit(cache=True)
-def nb_prepend(x, n, value = nan):
+def nb_prepend(x, n, value=nan):
     return append(array([value] * n), x)
 
 
 # Like Pandas Rolling Window. x.rolling(n).fn()
 @njit(cache=True)
-def nb_rolling(x, n, fn = None):
+def nb_rolling(x, n, fn=None):
     if fn is None:
         return x
     m = x.size
@@ -83,9 +78,9 @@ def nb_rolling(x, n, fn = None):
         return result  # TODO: Handle negative rolling windows
 
     for i in range(0, m):
-        result[i] = fn(x[i:n + i])
+        result[i] = fn(x[i : n + i])
     result = roll(result, n - 1)
-    result[:n - 1] = nan
+    result[: n - 1] = nan
     return result
 
 
@@ -93,7 +88,7 @@ def nb_rolling(x, n, fn = None):
 # shift5 - preallocate empty array and assign slice by chrisaycock
 # https://stackoverflow.com/questions/30399534/shift-elements-in-a-numpy-array
 @njit(cache=True)
-def nb_shift(x, n, value = nan):
+def nb_shift(x, n, value=nan):
     result = empty_like(x)
     if n > 0:
         result[:n] = value

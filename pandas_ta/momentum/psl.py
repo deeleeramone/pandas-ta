@@ -3,20 +3,22 @@ from numpy import sign
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import (
-    nb_idiff,
     v_drift,
     v_offset,
     v_pos_default,
     v_scalar,
-    v_series
+    v_series,
 )
 
 
-
 def psl(
-    close: Series, open_: Series = None,
-    length: Int = None, scalar: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    open_: Series = None,
+    length: Int = None,
+    scalar: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Psychological Line (PSL)
 
@@ -60,7 +62,7 @@ def psl(
     else:
         diff = sign(close.diff(drift))
 
-    diff.fillna(0, inplace=True)
+    diff = diff.fillna(0)
     diff[diff <= 0] = 0  # Set negative values to zero
 
     psl = scalar * diff.rolling(length).sum() / length
@@ -71,7 +73,7 @@ def psl(
 
     # Fill
     if "fillna" in kwargs:
-        psl.fillna(kwargs["fillna"], inplace=True)
+        psl = psl.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}"

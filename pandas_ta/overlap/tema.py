@@ -6,10 +6,12 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from .ema import ema
 
 
-
 def tema(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Triple Exponential Moving Average (TEMA)
 
@@ -46,6 +48,7 @@ def tema(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import TEMA
+
         tema = TEMA(close, length)
     else:
         ema1 = ema(close=close, length=length, talib=mode_tal, **kwargs)
@@ -59,7 +62,7 @@ def tema(
 
     # Fill
     if "fillna" in kwargs:
-        tema.fillna(kwargs["fillna"], inplace=True)
+        tema = tema.fillna(kwargs["fillna"])
 
     # Name and Category
     tema.name = f"TEMA_{length}"

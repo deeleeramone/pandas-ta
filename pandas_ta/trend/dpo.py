@@ -5,10 +5,12 @@ from pandas_ta.overlap import sma
 from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series
 
 
-
 def dpo(
-    close: Series, length: Int = None, centered: bool = True,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    centered: bool = True,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Detrend Price Oscillator (DPO)
 
@@ -66,7 +68,7 @@ def dpo(
 
     # Fill
     if "fillna" in kwargs:
-        dpo.fillna(kwargs["fillna"], inplace=True)
+        dpo = dpo.fillna(kwargs["fillna"])
 
     # Name and Category
     dpo.name = f"DPO_{length}"

@@ -2,20 +2,16 @@
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.overlap import linreg
-from pandas_ta.utils import (
-    v_drift,
-    v_offset,
-    v_pos_default,
-    v_scalar,
-    v_series
-)
-
+from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_scalar, v_series
 
 
 def cfo(
-    close: Series, length: Int = None,
-    scalar: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Chande Forcast Oscillator (CFO)
 
@@ -60,7 +56,7 @@ def cfo(
 
     # Fill
     if "fillna" in kwargs:
-        cfo.fillna(kwargs["fillna"], inplace=True)
+        cfo = cfo.fillna(kwargs["fillna"])
 
     # Name and Category
     cfo.name = f"CFO_{length}"

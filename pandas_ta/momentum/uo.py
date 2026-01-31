@@ -2,22 +2,23 @@
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    v_drift,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_series, v_talib
 
 
 def uo(
-    high: Series, low: Series, close: Series,
-    fast: Int = None, medium: Int = None, slow: Int = None,
-    fast_w: IntFloat = None, medium_w: IntFloat = None, slow_w: IntFloat = None,
-    talib: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    fast: Int = None,
+    medium: Int = None,
+    slow: Int = None,
+    fast_w: IntFloat = None,
+    medium_w: IntFloat = None,
+    slow_w: IntFloat = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Ultimate Oscillator (UO)
 
@@ -70,12 +71,11 @@ def uo(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import ULTOSC
+
         uo = ULTOSC(high, low, close, fast, medium, slow)
     else:
         close_drift = close.shift(drift)
-        tdf = DataFrame({
-            "high": high, "low": low, f"close_{drift}": close_drift
-        })
+        tdf = DataFrame({"high": high, "low": low, f"close_{drift}": close_drift})
         max_h_or_pc = tdf.loc[:, ["high", f"close_{drift}"]].max(axis=1)
         min_l_or_pc = tdf.loc[:, ["low", f"close_{drift}"]].min(axis=1)
         del tdf
@@ -88,8 +88,7 @@ def uo(
         slow_avg = bp.rolling(slow).sum() / tr.rolling(slow).sum()
 
         total_weight = fast_w + medium_w + slow_w
-        weights = (fast_w * fast_avg) + (medium_w * medium_avg) \
-            + (slow_w * slow_avg)
+        weights = (fast_w * fast_avg) + (medium_w * medium_avg) + (slow_w * slow_avg)
         uo = 100 * weights / total_weight
 
     # Offset
@@ -98,7 +97,7 @@ def uo(
 
     # Fill
     if "fillna" in kwargs:
-        uo.fillna(kwargs["fillna"], inplace=True)
+        uo = uo.fillna(kwargs["fillna"])
 
     # Name and Category
     uo.name = f"UO_{fast}_{medium}_{slow}"

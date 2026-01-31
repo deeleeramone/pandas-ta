@@ -4,7 +4,7 @@ import pandas_ta as ta
 
 from sys import platform as sys_platform
 from pandas import DataFrame, Series
-from pandas.api.types import is_datetime64_ns_dtype
+from pandas.api.types import is_datetime64_any_dtype
 from pytest import mark, param
 
 
@@ -130,7 +130,7 @@ def test_datetime_ordered(df):
 
     # Test a non-datetime64 index
     original = df.copy()
-    original.reset_index(inplace=True)
+    original = original.reset_index()
     result = original.ta.datetime_ordered()
     assert result is False
 
@@ -141,7 +141,7 @@ def test_reverse(df):
 
     # Check if first and last time are reversed
     assert result.index[-1] == original.index[0]
-    assert  result.index[0] == original.index[-1]
+    assert result.index[0] == original.index[-1]
 
 
 def test_df_dates(df):
@@ -151,14 +151,18 @@ def test_df_dates(df):
 
 def test_fibonacci():
     np.testing.assert_array_equal(ta.utils.fibonacci(0, False), np.array([1, 1]))
-    np.testing.assert_array_equal(ta.utils.fibonacci(5, False), np.array([1, 1, 2, 3, 5]))
+    np.testing.assert_array_equal(
+        ta.utils.fibonacci(5, False), np.array([1, 1, 2, 3, 5])
+    )
 
     assert isinstance(ta.utils.fibonacci(2, False), np.ndarray)
 
 
 def test_fibonacci_weighted():
     np.testing.assert_array_equal(ta.utils.fibonacci(0, True), np.array([0.5, 0.5]))
-    np.testing.assert_allclose(ta.utils.fibonacci(5, True), np.array([1 / 12, 1 / 12, 1 / 6, 1 / 4, 5 / 12]))
+    np.testing.assert_allclose(
+        ta.utils.fibonacci(5, True), np.array([1 / 12, 1 / 12, 1 / 6, 1 / 4, 5 / 12])
+    )
 
     assert isinstance(ta.utils.fibonacci(2, True), np.ndarray)
 
@@ -222,7 +226,10 @@ def test_pascals_triangle():
     array = np.array([1])
     np.testing.assert_array_equal(ta.utils.pascals_triangle(), array)
     np.testing.assert_array_equal(ta.utils.pascals_triangle(weighted=True), array)
-    np.testing.assert_array_equal(ta.utils.pascals_triangle(weighted=True, inverse=True), np.array([0]))
+    np.testing.assert_array_equal(
+        ta.utils.pascals_triangle(weighted=True, inverse=True), np.array([0])
+    )
+
 
 @mark.parametrize("value", [-5, -1, 0, 1, 5])
 def test_pascals_triangle_n(value):
@@ -230,8 +237,12 @@ def test_pascals_triangle_n(value):
     array_w = array / np.sum(array)
     array_iw = 1 - array_w
     np.testing.assert_array_equal(ta.utils.pascals_triangle(n=value), array)
-    np.testing.assert_array_equal(ta.utils.pascals_triangle(n=value, weighted=True), array_w)
-    np.testing.assert_array_equal(ta.utils.pascals_triangle(n=value, weighted=True, inverse=True), array_iw)
+    np.testing.assert_array_equal(
+        ta.utils.pascals_triangle(n=value, weighted=True), array_w
+    )
+    np.testing.assert_array_equal(
+        ta.utils.pascals_triangle(n=value, weighted=True, inverse=True), array_iw
+    )
 
 
 @mark.parametrize("value", [param(None, marks=mark.xfail), "NYSE", "NZSX", "SSE"])
@@ -242,10 +253,16 @@ def test_get_time_(value):
     assert value in result
 
 
-@mark.parametrize("array,degree,result", [
-    ([1], 1, 1), ([1, 1], 1, 2), ([1, 0, -1], 1, 0),
-    ([1, 0, 1], 1, 2), ([1, 1, 1], 1, 3)
-])
+@mark.parametrize(
+    "array,degree,result",
+    [
+        ([1], 1, 1),
+        ([1, 1], 1, 2),
+        ([1, 0, -1], 1, 0),
+        ([1, 0, 1], 1, 2),
+        ([1, 1, 1], 1, 3),
+    ],
+)
 def test_hpoly(array, degree, result):
     assert ta.utils.hpoly(array, degree) == result
 
@@ -257,24 +274,31 @@ def test_inv_norm_isnan(value, result):
 
 @mark.skipif(
     not sys_platform.startswith("darwin"),
-    reason="Passes on Mac... yet fails on Ubuntu 3.9 (Github Action)"
+    reason="Passes on Mac... yet fails on Ubuntu 3.9 (Github Action)",
 )
-@mark.parametrize("value,result", [
-    (0, -np.inf), (1 - 0.96, -1.7506860712521692),
-#    (1 - 0.8646, -1.101222112591979), # FAILs with Python 3.11.7 on Mac
-    param(1 - 0.8646, -1.101222112591979, marks=mark.xfail),
-    (0.5, 0),
-#    (0.8646, 1.101222112591979), # FAILs with Python 3.11.7 on Mac
-    param(0.8646, 1.101222112591979, marks=mark.xfail),
-    (0.96, 1.7506860712521692), (1, np.inf)
-])
+@mark.parametrize(
+    "value,result",
+    [
+        (0, -np.inf),
+        (1 - 0.96, -1.7506860712521692),
+        #    (1 - 0.8646, -1.101222112591979), # FAILs with Python 3.11.7 on Mac
+        param(1 - 0.8646, -1.101222112591979, marks=mark.xfail),
+        (0.5, 0),
+        #    (0.8646, 1.101222112591979), # FAILs with Python 3.11.7 on Mac
+        param(0.8646, 1.101222112591979, marks=mark.xfail),
+        (0.96, 1.7506860712521692),
+        (1, np.inf),
+    ],
+)
 def test_inv_norm_value(value, result):
     assert ta.utils.inv_norm(value) == result
 
 
 def test_symmetric_triangle():
-    np.testing.assert_array_equal(ta.utils.symmetric_triangle(), np.array([1,1]))
-    np.testing.assert_array_equal(ta.utils.symmetric_triangle(weighted=True), np.array([0.5, 0.5]))
+    np.testing.assert_array_equal(ta.utils.symmetric_triangle(), np.array([1, 1]))
+    np.testing.assert_array_equal(
+        ta.utils.symmetric_triangle(weighted=True), np.array([0.5, 0.5])
+    )
 
 
 @mark.parametrize("value", [2, 3, 10])
@@ -282,22 +306,35 @@ def test_symmetric_triangle_n(value):
     array = ta.utils.symmetric_triangle(n=value)
     array_w = array / np.sum(array)
     np.testing.assert_array_equal(ta.utils.symmetric_triangle(n=value), array)
-    np.testing.assert_array_equal(ta.utils.symmetric_triangle(n=value, weighted=True), array_w)
+    np.testing.assert_array_equal(
+        ta.utils.symmetric_triangle(n=value, weighted=True), array_w
+    )
 
 
-@mark.parametrize("value,result", [
-    ("sma", 0), ("Sma", 0), ("ema", 1), ("wma", 2), ("dema", 3), ("tema", 4),
-    ("trima", 5), ("kama", 6), ("mama", 7), ("t3", 8)
-])
+@mark.parametrize(
+    "value,result",
+    [
+        ("sma", 0),
+        ("Sma", 0),
+        ("ema", 1),
+        ("wma", 2),
+        ("dema", 3),
+        ("tema", 4),
+        ("trima", 5),
+        ("kama", 6),
+        ("mama", 7),
+        ("t3", 8),
+    ],
+)
 def test_tal_ma(value, result):
     assert ta.utils.tal_ma(value) == result
 
 
 def test_to_utc(df):
     result = ta.utils.to_utc(df)
-    assert is_datetime64_ns_dtype(result.index)
+    assert is_datetime64_any_dtype(result.index)
+    assert str(result.index.tz) == "UTC"
     # assert is_datetime64tz_dtype(result.index) # Depreciation Warning but no mention in 2.2 docs
-
 
 
 def test_version():
@@ -306,16 +343,34 @@ def test_version():
 
 
 def test_v_drift_type():
-    _instances = [0, None, "", [], {}, np.int8(5), np.int16(5), np.int32(5), np.int64(5)]
+    _instances = [
+        0,
+        None,
+        "",
+        [],
+        {},
+        np.int8(5),
+        np.int16(5),
+        np.int32(5),
+        np.int64(5),
+    ]
     for _ in _instances:
         assert isinstance(ta.utils.v_drift(_), int)
 
 
-@mark.parametrize("value,result", [
-    (-1.1, 1), (0, 1), (1.1, 1), (5, 5),
-    (np.int64(-1.1), -1), (np.int64(0), 1),
-    (np.int64(1.1), 1), (np.int64(5), 5)
-])
+@mark.parametrize(
+    "value,result",
+    [
+        (-1.1, 1),
+        (0, 1),
+        (1.1, 1),
+        (5, 5),
+        (np.int64(-1.1), -1),
+        (np.int64(0), 1),
+        (np.int64(1.1), 1),
+        (np.int64(5), 5),
+    ],
+)
 def test_v_drift_value(value, result):
     assert ta.utils.v_drift(value) == result
 
@@ -326,34 +381,65 @@ def test_v_lowerbound_type(value, strict):
     assert isinstance(ta.v_lowerbound(value, strict=strict), (float, int))
 
 
-@mark.parametrize("value,result", [
-    (-1.1, 0), (-1, 0), (0.0, 0), (0, 0), (0.1, 0.1), (1.0, 1.0), (1, 1),
-])
+@mark.parametrize(
+    "value,result",
+    [
+        (-1.1, 0),
+        (-1, 0),
+        (0.0, 0),
+        (0, 0),
+        (0.1, 0.1),
+        (1.0, 1.0),
+        (1, 1),
+    ],
+)
 def test_v_lowerbound_value_strict(value, result):
     assert ta.utils.v_lowerbound(value) == result
 
 
-@mark.parametrize("value,result", [
-    (-1.1, 0), (-1, 0), (0.0, 0), (0, 0), (0.1, 0.1), (1.0, 1), (1, 1),
-])
+@mark.parametrize(
+    "value,result",
+    [
+        (-1.1, 0),
+        (-1, 0),
+        (0.0, 0),
+        (0, 0),
+        (0.1, 0.1),
+        (1.0, 1),
+        (1, 1),
+    ],
+)
 def test_v_lowerbound_value_strict_false(value, result):
     assert ta.utils.v_lowerbound(value, strict=False) == result
 
 
-@mark.parametrize("value", [
-    0, None, "", [], {}, np.int8(5), np.int16(5), np.int32(5), np.int64(5)
-])
+@mark.parametrize(
+    "value", [0, None, "", [], {}, np.int8(5), np.int16(5), np.int32(5), np.int64(5)]
+)
 def test_v_offset_types(value):
     assert isinstance(ta.utils.v_offset(value), int)
 
 
-@mark.parametrize("value,result", [
-    (None, 0), (-1.1, 0), (-1, -1), (0, 0), (1.1, 0), (1, 1), (2, 2),
-    (np.int64(-1), -1), (np.int64(0), 0), (np.int64(1.1), 1),
-    (np.int64(1), 1), (np.int64(2), 2), (np.int64(-1.1), -1),
-    (np.int64(1.1), 1),
-])
-def test_v_offset_value(value,result):
+@mark.parametrize(
+    "value,result",
+    [
+        (None, 0),
+        (-1.1, 0),
+        (-1, -1),
+        (0, 0),
+        (1.1, 0),
+        (1, 1),
+        (2, 2),
+        (np.int64(-1), -1),
+        (np.int64(0), 0),
+        (np.int64(1.1), 1),
+        (np.int64(1), 1),
+        (np.int64(2), 2),
+        (np.int64(-1.1), -1),
+        (np.int64(1.1), 1),
+    ],
+)
+def test_v_offset_value(value, result):
     assert ta.utils.v_offset(value) == result
 
 
@@ -363,10 +449,17 @@ def test_v_upperbound_value_strict(value, strict):
     assert isinstance(ta.utils.v_upperbound(value, strict=strict), (float, int))
 
 
-@mark.parametrize("value,result", [
-    (-0.0000000000000001, 0), (0.0000000000000001, 0), (0, 0), (0.0, 0),
-    param(-0.000000000000001, 0, marks=mark.xfail), param(1, 0, marks=mark.xfail)
-])
+@mark.parametrize(
+    "value,result",
+    [
+        (-0.0000000000000001, 0),
+        (0.0000000000000001, 0),
+        (0, 0),
+        (0.0, 0),
+        param(-0.000000000000001, 0, marks=mark.xfail),
+        param(1, 0, marks=mark.xfail),
+    ],
+)
 def test_zero(value, result):
     assert ta.utils.zero(value) == result
 

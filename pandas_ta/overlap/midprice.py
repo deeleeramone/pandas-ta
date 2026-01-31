@@ -5,10 +5,13 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 
 
-
 def midprice(
-    high: Series, low: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Midprice
 
@@ -47,6 +50,7 @@ def midprice(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import MIDPRICE
+
         midprice = MIDPRICE(high, low, length)
     else:
         lowest_low = low.rolling(length, min_periods=min_periods).min()
@@ -59,7 +63,7 @@ def midprice(
 
     # Fill
     if "fillna" in kwargs:
-        midprice.fillna(kwargs["fillna"], inplace=True)
+        midprice = midprice.fillna(kwargs["fillna"])
 
     # Name and Category
     midprice.name = f"MIDPRICE_{length}"

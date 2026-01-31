@@ -5,11 +5,14 @@ from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_series
 from pandas_ta.volatility import true_range
 
 
-
 def vortex(
-    high: Series, low: Series, close: Series,
-    length: Int = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Vortex
 
@@ -66,8 +69,8 @@ def vortex(
 
     # Fill
     if "fillna" in kwargs:
-        vip.fillna(kwargs["fillna"], inplace=True)
-        vim.fillna(kwargs["fillna"], inplace=True)
+        vip = vip.fillna(kwargs["fillna"])
+        vim = vim.fillna(kwargs["fillna"])
 
     # Name and Category
     vip.name = f"VTXP_{length}"

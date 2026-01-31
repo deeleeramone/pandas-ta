@@ -6,10 +6,12 @@ from .decreasing import decreasing
 from .increasing import increasing
 
 
-
 def short_run(
-    fast: Series, slow: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    fast: Series,
+    slow: Series,
+    length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Short Run
 
@@ -62,7 +64,7 @@ def short_run(
 
     # Fill
     if "fillna" in kwargs:
-        short_run.fillna(kwargs["fillna"], inplace=True)
+        short_run = short_run.fillna(kwargs["fillna"])
 
     # Name and Category
     short_run.name = f"SR_{length}"

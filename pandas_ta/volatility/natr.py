@@ -10,17 +10,23 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
 from pandas_ta.volatility import atr
 
 
-
 def natr(
-    high: Series, low: Series, close: Series,
-    length: Int = None, scalar: IntFloat = None, mamode: str = None,
-    talib: bool = None, prenan: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    mamode: str = None,
+    talib: bool = None,
+    prenan: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Normalized Average True Range (NATR)
 
@@ -68,13 +74,20 @@ def natr(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import NATR
+
         natr = NATR(high, low, close, length)
     else:
-        natr = (scalar / close) * \
-        atr(
-            high=high, low=low, close=close, length=length,
-            mamode=mamode, drift=drift, talib=mode_tal,
-            prenan=prenan, offset=offset, **kwargs
+        natr = (scalar / close) * atr(
+            high=high,
+            low=low,
+            close=close,
+            length=length,
+            mamode=mamode,
+            drift=drift,
+            talib=mode_tal,
+            prenan=prenan,
+            offset=offset,
+            **kwargs,
         )
 
     # Offset
@@ -83,7 +96,7 @@ def natr(
 
     # Fill
     if "fillna" in kwargs:
-        natr.fillna(kwargs["fillna"], inplace=True)
+        natr = natr.fillna(kwargs["fillna"])
 
     # Name and Category
     natr.name = f"NATR_{length}"

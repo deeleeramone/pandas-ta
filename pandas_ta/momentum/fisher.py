@@ -6,10 +6,13 @@ from pandas_ta.overlap import hl2
 from pandas_ta.utils import high_low_range, v_offset, v_pos_default, v_series
 
 
-
 def fisher(
-    high: Series, low: Series, length: Int = None, signal: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    length: Int = None,
+    signal: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Fisher Transform (FISHT)
 
@@ -79,8 +82,8 @@ def fisher(
 
     # Fill
     if "fillna" in kwargs:
-        fisher.fillna(kwargs["fillna"], inplace=True)
-        signalma.fillna(kwargs["fillna"], inplace=True)
+        fisher = fisher.fillna(kwargs["fillna"])
+        signalma = signalma.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{signal}"

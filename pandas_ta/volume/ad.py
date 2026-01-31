@@ -5,11 +5,15 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import non_zero_range, v_offset, v_series, v_talib
 
 
-
 def ad(
-    high: Series, low: Series, close: Series, volume: Series,
-    open_: Series = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series,
+    open_: Series = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Accumulation/Distribution (AD)
 
@@ -46,6 +50,7 @@ def ad(
     # Calculate
     if Imports["talib"] and mode_tal and volume.size:
         from talib import AD
+
         ad = AD(high, low, close, volume)
     else:
         if open_ is not None:
@@ -64,7 +69,7 @@ def ad(
 
     # Fill
     if "fillna" in kwargs:
-        ad.fillna(kwargs["fillna"], inplace=True)
+        ad = ad.fillna(kwargs["fillna"])
 
     # Name and Category
     ad.name = "AD" if open_ is None else "ADo"

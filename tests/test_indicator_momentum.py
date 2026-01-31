@@ -3,8 +3,7 @@ import pandas.testing as pdt
 import talib as tal
 import pandas_ta as ta
 
-from pandas import DataFrame, Series, concat
-from pytest import mark
+from pandas import DataFrame, Series
 
 from .config import CORRELATION, CORRELATION_THRESHOLD, error_analysis
 
@@ -160,14 +159,18 @@ def test_dm(df):
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
-            dmp_corr = ta.utils.df_error_analysis(result.iloc[:, 0], expecteddf.iloc[:, 0])
+            dmp_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 0], expecteddf.iloc[:, 0]
+            )
             assert dmp_corr > CORRELATION_THRESHOLD
             print(f"{dmp_corr=}")
         except Exception as ex:
             error_analysis(result, CORRELATION, ex)
 
         try:
-            dmn_corr = ta.utils.df_error_analysis(result.iloc[:, 1], expecteddf.iloc[:, 1])
+            dmn_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 1], expecteddf.iloc[:, 1]
+            )
             assert dmn_corr > CORRELATION_THRESHOLD
             print(f"{dmn_corr=}")
         except Exception as ex:
@@ -233,11 +236,13 @@ def test_macd(df):
 
     try:
         expected = tal.MACD(df.close)
-        expecteddf = DataFrame({
-            "MACDh_12_26_9": expected[2],
-            "MACDs_12_26_9": expected[1],
-            "MACD_12_26_9": expected[0]
-        })
+        expecteddf = DataFrame(
+            {
+                "MACDh_12_26_9": expected[2],
+                "MACDs_12_26_9": expected[1],
+                "MACD_12_26_9": expected[0],
+            }
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
@@ -306,7 +311,7 @@ def test_ppo(df):
 
     try:
         expected = tal.PPO(df.close)
-        pdt.assert_series_equal(result.iloc[:,0], expected, check_names=False)
+        pdt.assert_series_equal(result.iloc[:, 0], expected, check_names=False)
     except AssertionError:
         try:
             corr = ta.utils.df_error_analysis(result, expected)
@@ -471,7 +476,9 @@ def test_stoch(df):
 
     try:
         expected = tal.STOCH(df.high, df.low, df.close, 14, 3, 0, 3, 0)
-        expecteddf = DataFrame({"STOCHk_14_3_0_3_0": expected[0], "STOCHd_14_3_0_3": expected[1]})
+        expecteddf = DataFrame(
+            {"STOCHk_14_3_0_3_0": expected[0], "STOCHd_14_3_0_3": expected[1]}
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
@@ -493,18 +500,24 @@ def test_stochf(df):
 
     try:
         expected = tal.STOCHF(df.high, df.low, df.close, 14, 3, 0)
-        expecteddf = DataFrame({"STOCHFk_14_3_0": expected[0], "STOCHFd_14_3_0": expected[1]})
+        expecteddf = DataFrame(
+            {"STOCHFk_14_3_0": expected[0], "STOCHFd_14_3_0": expected[1]}
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
-            stochk_corr = ta.utils.df_error_analysis(result.iloc[:, 0], expected.iloc[:, 0])
+            stochk_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 0], expected.iloc[:, 0]
+            )
             print(f"{stochk_corr=}")
             assert stochk_corr > CORRELATION_THRESHOLD
         except Exception as ex:
             error_analysis(result.iloc[:, 0], CORRELATION, ex)
 
         try:
-            stochd_corr = ta.utils.df_error_analysis(result.iloc[:, 1], expected.iloc[:, 1])
+            stochd_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 1], expected.iloc[:, 1]
+            )
             print(f"{stochd_corr=}")
             assert stochd_corr > CORRELATION_THRESHOLD
         except Exception as ex:
@@ -523,10 +536,9 @@ def test_stochrsi(df):
 
     try:
         expected = tal.STOCHRSI(df.close, 14, 14, 3, 0)
-        expecteddf = DataFrame({
-            "STOCHRSIk_14_14_0_3": expected[0],
-            "STOCHRSId_14_14_3_0": expected[1]
-        })
+        expecteddf = DataFrame(
+            {"STOCHRSIk_14_14_0_3": expected[0], "STOCHRSId_14_14_3_0": expected[1]}
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
@@ -736,8 +748,10 @@ def test_ext_pvo(df):
 def test_ext_qqe(df):
     df.ta.qqe(append=True)
     columns = [
-        "QQE_14_5_4.236", "QQE_14_5_4.236_RSIMA",
-        "QQEl_14_5_4.236", "QQEs_14_5_4.236"
+        "QQE_14_5_4.236",
+        "QQE_14_5_4.236_RSIMA",
+        "QQEl_14_5_4.236",
+        "QQEs_14_5_4.236",
     ]
     assert list(df.columns[-4:]) == columns
 
@@ -771,8 +785,12 @@ def test_ext_smc(df):
     df.ta.smc(append=True)
     columns = [
         "SMChv_14_50_20_5",
-        "SMCbf_14_50_20_5", "SMCbi_14_50_20_5", "SMCbp_14_50_20_5",
-        "SMCtf_14_50_20_5", "SMCti_14_50_20_5", "SMCtp_14_50_20_5"
+        "SMCbf_14_50_20_5",
+        "SMCbi_14_50_20_5",
+        "SMCbp_14_50_20_5",
+        "SMCtf_14_50_20_5",
+        "SMCti_14_50_20_5",
+        "SMCtp_14_50_20_5",
     ]
     assert list(df.columns[-7:]) == columns
 

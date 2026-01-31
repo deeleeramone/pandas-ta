@@ -6,11 +6,15 @@ from pandas_ta.overlap import swma
 from pandas_ta.utils import non_zero_range, v_offset, v_pos_default, v_series
 
 
-
 def rvgi(
-    open_: Series, high: Series, low: Series, close: Series,
-    length: Int = None, swma_length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    swma_length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Relative Vigor Index (RVGI)
 
@@ -55,10 +59,8 @@ def rvgi(
     high_low_range = non_zero_range(high, low)
     close_open_range = non_zero_range(close, open_)
 
-    numerator = swma(close_open_range, length=swma_length) \
-        .rolling(length).sum()
-    denominator = swma(high_low_range, length=swma_length) \
-        .rolling(length).sum()
+    numerator = swma(close_open_range, length=swma_length).rolling(length).sum()
+    denominator = swma(high_low_range, length=swma_length).rolling(length).sum()
 
     rvgi = numerator / denominator
     signal = swma(rvgi, length=swma_length)
@@ -73,8 +75,8 @@ def rvgi(
 
     # Fill
     if "fillna" in kwargs:
-        rvgi.fillna(kwargs["fillna"], inplace=True)
-        signal.fillna(kwargs["fillna"], inplace=True)
+        rvgi = rvgi.fillna(kwargs["fillna"])
+        signal = signal.fillna(kwargs["fillna"])
 
     # Name and Category
     rvgi.name = f"RVGI_{length}_{swma_length}"

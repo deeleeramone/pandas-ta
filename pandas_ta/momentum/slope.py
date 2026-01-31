@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
-from numpy import arctan, pi, rad2deg
+from numpy import arctan, rad2deg
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
-from pandas_ta.utils import (
-    nb_idiff,
-    v_bool,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import nb_idiff, v_bool, v_offset, v_pos_default, v_series
 
 
 def slope(
-    close: Series, length: Int = None,
-    as_angle: bool = None, to_degrees: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    as_angle: bool = None,
+    to_degrees: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Slope
 
@@ -65,10 +61,14 @@ def slope(
 
     # Fill
     if "fillna" in kwargs:
-        slope.fillna(kwargs["fillna"], inplace=True)
+        slope = slope.fillna(kwargs["fillna"])
 
     # Name and Category
-    slope.name = f"SLOPE_{length}" if not as_angle else f"ANGLE{'d' if to_degrees else 'r'}_{length}"
+    slope.name = (
+        f"SLOPE_{length}"
+        if not as_angle
+        else f"ANGLE{'d' if to_degrees else 'r'}_{length}"
+    )
     slope.category = "momentum"
 
     return slope

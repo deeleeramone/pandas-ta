@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+
 sys.dont_write_bytecode = True
 
 from os import system as os_system
@@ -10,20 +11,22 @@ import pandas_ta as ta
 from pandas import read_csv
 
 TEST_ROWS = 200
-TEST_CSV = f"data/SPY_D.csv"
+TEST_CSV = "data/SPY_D.csv"
 
 BEEP = False
-PLAY_BEEP = f"osascript -e beep"
+PLAY_BEEP = "osascript -e beep"
+
 
 @pytest.fixture(name="df", scope="function")
 def testdf():
     """Yields a truncated df from TEST_CSV file"""
     df = read_csv(TEST_CSV, index_col=0, parse_dates=True)
-    df.drop(columns=["dividends", "stock splits"], inplace=True)
+    df = df.drop(columns=["dividends", "stock splits"])
     yield df.iloc[:TEST_ROWS]
 
     del df
-    if BEEP: os_system(PLAY_BEEP)
+    if BEEP:
+        os_system(PLAY_BEEP)
 
 
 @pytest.fixture(scope="function")
@@ -53,13 +56,13 @@ def custom_study_a():
         {"kind": "trix"},  # 2
         {"kind": "bbands", "length": 20},  # 5
         {"kind": "log_return", "cumulative": True},  # 1
-        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"} # 1
+        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"},  # 1
     ]
     return ta.Study(
         name="Commons with Cumulative Log Return EMA Chain",
         ta=_ta,
         # cores=0,
-        description="Common indicators with specific lengths and a chained indicator"
+        description="Common indicators with specific lengths and a chained indicator",
     )
 
 
@@ -69,12 +72,12 @@ def custom_study_b():
     parameter index as a tuple instead of using a named parameter"""
     _ta = [
         {"kind": "ema", "params": (5,)},  # 1
-        {"kind": "fisher", "params": (13, 7)}  # 2
+        {"kind": "fisher", "params": (13, 7)},  # 2
     ]
     return ta.Study(
         name="Custom Args Tuple",
         ta=_ta,
-        description="Allow for easy filling in indicator arguments by argument placement"
+        description="Allow for easy filling in indicator arguments by argument placement",
     )
 
 
@@ -85,7 +88,7 @@ def custom_study_c():
     return ta.Study(
         name="Custom Col Numbers Tuple",
         ta=[{"kind": "bbands", "col_names": ("LB", "MB", "UB", "BW", "BP")}],
-        description="Allow for easy renaming of resultant columns"
+        description="Allow for easy renaming of resultant columns",
     )
 
 
@@ -96,10 +99,10 @@ def custom_study_d():
     return ta.Study(
         name="Custom Col Numbers Tuple",
         ta=[
-            {"kind": "macd", "col_numbers": (1,)},    # macd histogram
-            {"kind": "bbands", "col_numbers": (0,2)}  # bbands lower and upper
+            {"kind": "macd", "col_numbers": (1,)},  # macd histogram
+            {"kind": "bbands", "col_numbers": (0, 2)},  # bbands lower and upper
         ],
-        description="Allow for easy selection of resultant columns"
+        description="Allow for easy selection of resultant columns",
     )
 
 
@@ -108,14 +111,11 @@ def custom_study_e():
     """Returns a Custom Study that has non default indicator parameters and
     an example of indicator composition/chaining: 'ema(CUMLOGRET_1, 5)'"""
     _ta = [
-        {"kind": "amat", "fast": 20, "slow": 50 },  # 2
+        {"kind": "amat", "fast": 20, "slow": 50},  # 2
         {"kind": "log_return", "cumulative": True},  # 1
-        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5} # 1
+        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5},  # 1
     ]
 
     return ta.Study(
-        name="AMAT Log Returns",
-        ta=_ta,
-        cores=0,
-        description="AMAT Log Returns"
+        name="AMAT Log Returns", ta=_ta, cores=0, description="AMAT Log Returns"
     )

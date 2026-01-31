@@ -4,10 +4,8 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def kurtosis(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """Rolling Kurtosis
 
@@ -50,7 +48,7 @@ def kurtosis(
 
     # Fill
     if "fillna" in kwargs:
-        kurtosis.fillna(kwargs["fillna"], inplace=True)
+        kurtosis = kurtosis.fillna(kwargs["fillna"])
 
     # Name and Category
     kurtosis.name = f"KURT_{length}"

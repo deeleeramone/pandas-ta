@@ -4,10 +4,8 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def skew(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """Rolling Skew
 
@@ -50,7 +48,7 @@ def skew(
 
     # Fill
     if "fillna" in kwargs:
-        skew.fillna(kwargs["fillna"], inplace=True)
+        skew = skew.fillna(kwargs["fillna"])
 
     # Name and Category
     skew.name = f"SKEW_{length}"

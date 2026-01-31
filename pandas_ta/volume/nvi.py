@@ -5,10 +5,13 @@ from pandas_ta.momentum import roc
 from pandas_ta.utils import signed_series, v_offset, v_pos_default, v_series
 
 
-
 def nvi(
-    close: Series, volume: Series, length: Int = None, initial: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    length: Int = None,
+    initial: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Negative Volume Index (NVI)
 
@@ -48,7 +51,7 @@ def nvi(
     roc_ = roc(close=close, length=length)
     signed_volume = signed_series(volume, 1)
     nvi = signed_volume[signed_volume < 0].abs() * roc_
-    nvi.fillna(0, inplace=True)
+    nvi = nvi.fillna(0)
     nvi.iloc[0] = initial
     nvi = nvi.cumsum()
 
@@ -58,7 +61,7 @@ def nvi(
 
     # Fill
     if "fillna" in kwargs:
-        nvi.fillna(kwargs["fillna"], inplace=True)
+        nvi = nvi.fillna(kwargs["fillna"])
 
     # Name and Category
     nvi.name = f"NVI_{length}"

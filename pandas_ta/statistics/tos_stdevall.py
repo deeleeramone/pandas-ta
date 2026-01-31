@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
+from warnings import simplefilter
+
 from numpy import arange, array, polyfit, std
 from pandas import DataFrame, DatetimeIndex, Series
 from pandas_ta._typing import DictLike, Int, List
 from pandas_ta.utils import v_list, v_lowerbound, v_offset, v_series
 
 
-
 def tos_stdevall(
-    close: Series, length: Int = None,
-    stds: List = None, ddof: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    stds: List = None,
+    ddof: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """TD Ameritrade's Think or Swim Standard Deviation All (TOS_STDEV)
 
@@ -42,7 +46,7 @@ def tos_stdevall(
             multiples of the standard deviation. Default: returns 7 columns.
     """
     # Validate
-    _props = f"TOS_STDEVALL"
+    _props = "TOS_STDEVALL"
     if length is None:
         length = close.size
     else:
@@ -77,11 +81,15 @@ def tos_stdevall(
 
     # Name and Category
     df = DataFrame({f"{_props}_LR": lr}, index=src_index)
+    simplefilter(action="ignore", category=FutureWarning)
     for i in stds:
-        df[f"{_props}_L_{i}"] = lr - i * stdev
-        df[f"{_props}_U_{i}"] = lr + i * stdev
-        df[f"{_props}_L_{i}"].name = df[f"{_props}_U_{i}"].name = f"{_props}"
-        df[f"{_props}_L_{i}"].category = df[f"{_props}_U_{i}"].category = "statistics"
+        lower_band = lr - i * stdev
+        upper_band = lr + i * stdev
+        lower_band.name = upper_band.name = f"{_props}"
+        lower_band.category = upper_band.category = "statistics"
+        df[f"{_props}_L_{i}"] = lower_band
+        df[f"{_props}_U_{i}"] = upper_band
+    simplefilter(action="default", category=FutureWarning)
 
     # Offset
     if offset != 0:
@@ -89,7 +97,7 @@ def tos_stdevall(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     df.name = f"{_props}"
     df.category = "statistics"

@@ -2,23 +2,21 @@
 from numpy import log, log10
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
-from pandas_ta.utils import (
-    v_bool,
-    v_drift,
-    v_offset,
-    v_pos_default,
-    v_scalar,
-    v_series
-)
+from pandas_ta.utils import v_bool, v_drift, v_offset, v_pos_default, v_scalar, v_series
 from pandas_ta.volatility import atr
 
 
-
 def chop(
-    high: Series, low: Series, close: Series,
-    length: Int = None, atr_length: Int = None,
-    ln: bool = None, scalar: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    atr_length: Int = None,
+    ln: bool = None,
+    scalar: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Choppiness Index (CHOP)
 
@@ -82,7 +80,7 @@ def chop(
 
     # Fill
     if "fillna" in kwargs:
-        chop.fillna(kwargs["fillna"], inplace=True)
+        chop = chop.fillna(kwargs["fillna"])
 
     # Name and Category
     chop.name = f"CHOP{'ln' if ln else ''}_{length}_{atr_length}_{scalar}"

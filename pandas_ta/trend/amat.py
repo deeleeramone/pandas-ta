@@ -7,11 +7,14 @@ from .long_run import long_run
 from .short_run import short_run
 
 
-
 def amat(
-    close: Series, fast: Int = None, slow: Int = None,
-    lookback: Int = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    lookback: Int = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Archer Moving Averages Trends (AMAT)
 
@@ -67,13 +70,13 @@ def amat(
 
     # Fill
     if "fillna" in kwargs:
-        mas_long.fillna(kwargs["fillna"], inplace=True)
-        mas_short.fillna(kwargs["fillna"], inplace=True)
+        mas_long = mas_long.fillna(kwargs["fillna"])
+        mas_short = mas_short.fillna(kwargs["fillna"])
 
     _props = f"_{fast}_{slow}_{lookback}"
     data = {
         f"AMAT{mamode[0]}_LR{_props}": mas_long,
-        f"AMAT{mamode[0]}_SR{_props}": mas_short
+        f"AMAT{mamode[0]}_SR{_props}": mas_short,
     }
     df = DataFrame(data, index=close.index)
 

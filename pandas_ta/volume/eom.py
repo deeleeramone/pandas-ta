@@ -2,20 +2,19 @@
 from pandas import Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.overlap import hl2, sma
-from pandas_ta.utils import (
-    non_zero_range,
-    v_drift,
-    v_pos_default,
-    v_offset,
-    v_series
-)
-
+from pandas_ta.utils import non_zero_range, v_drift, v_pos_default, v_offset, v_series
 
 
 def eom(
-    high: Series, low: Series, close: Series, volume: Series,
-    length: Int = None, divisor: IntFloat= None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series,
+    length: Int = None,
+    divisor: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Ease of Movement (EOM)
 
@@ -74,7 +73,7 @@ def eom(
 
     # Fill
     if "fillna" in kwargs:
-        eom.fillna(kwargs["fillna"], inplace=True)
+        eom = eom.fillna(kwargs["fillna"])
 
     # Name and Category
     eom.name = f"EOM_{length}_{divisor}"

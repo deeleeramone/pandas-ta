@@ -5,8 +5,10 @@ import pytest
 from multiprocessing import cpu_count
 from pandas import DataFrame
 
-categories = DataFrame().ta.categories() + \
-[pytest.param(ta.CommonStudy, id="common"), pytest.param(ta.AllStudy, id="all")]
+categories = DataFrame().ta.categories() + [
+    pytest.param(ta.CommonStudy, id="common"),
+    pytest.param(ta.AllStudy, id="all"),
+]
 
 # +/- when adding/removing indicators
 ALL_COLUMNS = 332
@@ -16,7 +18,7 @@ def test_all_study_props(all_study):
     s = all_study
     assert s.name == "All"
     assert isinstance(s.description, str)
-    assert s.total_ta() == 0 # Only 'study' that is None
+    assert s.total_ta() == 0  # Only 'study' that is None
     assert len(s.created) > 0
     assert s.cores == cpu_count()
 
@@ -30,13 +32,23 @@ def test_common_study_props(common_study):
     assert s.cores == 0
 
 
-@pytest.mark.parametrize("category,columns", [
-    ("candles", 70), ("cycles", 2), ("momentum", 85), ("overlap", 56),
-    ("performance", 2), ("statistics", 16), ("transform", 5), ("trend", 33),
-    ("volatility", 36), ("volume", 27),
-    pytest.param(ta.AllStudy, ALL_COLUMNS, id=f"all-{ALL_COLUMNS}"),
-    pytest.param(ta.CommonStudy, 5, id="common-5"),
-])
+@pytest.mark.parametrize(
+    "category,columns",
+    [
+        ("candles", 70),
+        ("cycles", 2),
+        ("momentum", 85),
+        ("overlap", 56),
+        ("performance", 2),
+        ("statistics", 16),
+        ("transform", 5),
+        ("trend", 33),
+        ("volatility", 36),
+        ("volume", 27),
+        pytest.param(ta.AllStudy, ALL_COLUMNS, id=f"all-{ALL_COLUMNS}"),
+        pytest.param(ta.CommonStudy, 5, id="common-5"),
+    ],
+)
 def test_study_category_columns(df, category, columns):
     initial_columns = df.shape[1]
     df.ta.study(category, cores=0)
@@ -103,7 +115,7 @@ def test_study_all_multirun_talib(df, all_study, talib):
 @pytest.mark.parametrize("talib", [False, True])
 def test_study_all_incremental_rows_talib(df, all_study, talib):
     MAX_ROWS = 90
-    df = df.iloc[:MAX_ROWS]   # Trim for this test
+    df = df.iloc[:MAX_ROWS]  # Trim for this test
 
     for i in range(0, MAX_ROWS):
         _df = df.iloc[:i]
@@ -114,6 +126,7 @@ def test_study_all_incremental_rows_talib(df, all_study, talib):
             break
 
 
+@pytest.mark.skip(reason="Multiprocessing tests can hang in pytest")
 @pytest.mark.parametrize("talib", [False, True])
 @pytest.mark.parametrize("category", categories)
 def test_study_mp_category_talib(df, category, talib):

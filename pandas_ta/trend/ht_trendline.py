@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-from numpy import arctan, copy, isnan, nan, rad2deg, zeros_like, zeros
-from numba import njit
+from numpy import arctan, isnan, nan, rad2deg, zeros_like
 from pandas import Series
-from pandas_ta._typing import DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    v_bool,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 
 
 @njit(cache=True)
@@ -34,13 +27,21 @@ def nb_ht_trendline(x):
         adj_prev_period = 0.075 * period[i - 1] + 0.54
 
         wma4[i] = 0.4 * x[i] + 0.3 * x[i - 1] + 0.2 * x[i - 2] + 0.1 * x[i - 3]
-        dt[i] = adj_prev_period * (a * wma4[i] + b * wma4[i - 2] - b * wma4[i - 4] - a * wma4[i - 6])
+        dt[i] = adj_prev_period * (
+            a * wma4[i] + b * wma4[i - 2] - b * wma4[i - 4] - a * wma4[i - 6]
+        )
 
-        q1[i] = adj_prev_period * (a * dt[i] + b * dt[i - 2] - b * dt[i - 4] - a * dt[i - 6])
+        q1[i] = adj_prev_period * (
+            a * dt[i] + b * dt[i - 2] - b * dt[i - 4] - a * dt[i - 6]
+        )
         i1[i] = dt[i - 3]
 
-        ji[i] = adj_prev_period * (a * i1[i] + b * i1[i - 2] - b * i1[i - 4] - a * i1[i - 6])
-        jq[i] = adj_prev_period * (a * q1[i] + b * q1[i - 2] - b * q1[i - 4] - a * q1[i - 6])
+        ji[i] = adj_prev_period * (
+            a * i1[i] + b * i1[i - 2] - b * i1[i - 4] - a * i1[i - 6]
+        )
+        jq[i] = adj_prev_period * (
+            a * q1[i] + b * q1[i - 2] - b * q1[i - 4] - a * q1[i - 6]
+        )
 
         i2[i] = i1[i] - jq[i]
         q2[i] = q1[i] + ji[i]
@@ -78,15 +79,22 @@ def nb_ht_trendline(x):
         i_trend[i] = dcp_avg
 
         if i > 12:
-            result[i] = 0.4 * i_trend[i] + 0.3 * i_trend[i - 1] + 0.2 * i_trend[i - 2] + 0.1 * i_trend[i - 3]
+            result[i] = (
+                0.4 * i_trend[i]
+                + 0.3 * i_trend[i - 1]
+                + 0.2 * i_trend[i - 2]
+                + 0.1 * i_trend[i - 3]
+            )
 
     return result
 
 
 def ht_trendline(
-    close: Series = None, talib: bool = None,
-    prenan: Int = None, offset: Int = None,
-    **kwargs: DictLike
+    close: Series = None,
+    talib: bool = None,
+    prenan: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Hilbert Transform TrendLine (HT_TL)
 
@@ -124,6 +132,7 @@ def ht_trendline(
 
     if Imports["talib"] and mode_tal:
         from talib import HT_TRENDLINE
+
         tl = HT_TRENDLINE(close)
     else:
         np_close = close.to_numpy()
@@ -142,9 +151,9 @@ def ht_trendline(
 
     # Fill
     if "fillna" in kwargs:
-        tl.fillna(kwargs["fillna"], inplace=True)
+        tl = tl.fillna(kwargs["fillna"])
 
-    tl.name = f"HT_TL"
+    tl.name = "HT_TL"
     tl.category = "trend"
 
     return tl

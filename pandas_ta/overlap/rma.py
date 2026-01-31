@@ -4,10 +4,8 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def rma(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """wildeR's Moving Average (RMA)
 
@@ -47,7 +45,7 @@ def rma(
 
     # Fill
     if "fillna" in kwargs:
-        rma.fillna(kwargs["fillna"], inplace=True)
+        rma = rma.fillna(kwargs["fillna"])
 
     # Name and Category
     rma.name = f"RMA_{length}"

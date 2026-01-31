@@ -5,10 +5,13 @@ from pandas_ta.overlap import hl2
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def ttm_trend(
-    high: Series, low: Series, close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """TTM Trend (TTM_TRND)
 
@@ -53,7 +56,7 @@ def ttm_trend(
     trend_avg = trend_avg / length
 
     tm_trend = (close > trend_avg).astype(int)
-    tm_trend.replace(0, -1, inplace=True)
+    tm_trend = tm_trend.replace(0, -1)
 
     # Offset
     if offset != 0:
@@ -61,7 +64,7 @@ def ttm_trend(
 
     # Fill
     if "fillna" in kwargs:
-        tm_trend.fillna(kwargs["fillna"], inplace=True)
+        tm_trend = tm_trend.fillna(kwargs["fillna"])
 
     # Name and Category
     tm_trend.name = f"TTM_TRND_{length}"

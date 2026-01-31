@@ -17,7 +17,7 @@ setup(
         "pandas_ta.trend",
         "pandas_ta.utils",
         "pandas_ta.volatility",
-        "pandas_ta.volume"
+        "pandas_ta.volume",
     ],
     version=".".join(("0", "4", "19b")),
     description=long_description,
@@ -29,9 +29,19 @@ setup(
     maintainer_email="appliedmathkj@gmail.com",
     download_url="https://github.com/twopirllc/pandas-ta.git",
     keywords=[
-        "technical analysis", "finance", "trading", "backtest", "trading bot",
-        "features", "pandas", "numpy", "numba", "vectorbt", "yfinance",
-        "polygon", "python3"
+        "technical analysis",
+        "finance",
+        "trading",
+        "backtest",
+        "trading bot",
+        "features",
+        "pandas",
+        "numpy",
+        "numba",
+        "vectorbt",
+        "yfinance",
+        "polygon",
+        "python3",
     ],
     license="The MIT License (MIT)",
     classifiers=[
@@ -54,30 +64,41 @@ setup(
         "data": ["data/*.csv"],
     },
     install_requires=[
-        "numba>=0.59.0",
-        "numpy==1.26.4",
+        "numpy>=1.26.4",
         "pandas>=2.2.0",
         "pandas-datareader",
-        "scipy>=1.12"
+        "scipy>=1.12",
     ],
     # List additional groups of dependencies here (e.g. development dependencies).
     # You can install these using the following syntax, for example:
     # $ pip install -e .[full,test]     # locally
     # $ pip install -U pandas_ta[full]  # pip
     extras_require={
+        "performance": [
+            "numba>=0.59.0",
+        ],
         "full": [
-            "alphaVantage-api", "matplotlib", "mplfinance",
-            "python-dotenv", "sklearn", "statsmodels", "stochastic",
-            "TA-Lib>=0.4.28", "tqdm", "vectorbt", "yfinance>=0.2.36"
+            "alphaVantage-api",
+            "matplotlib",
+            "mplfinance",
+            "numba>=0.59.0",
+            "python-dotenv",
+            "sklearn",
+            "statsmodels",
+            "stochastic",
+            "TA-Lib>=0.4.28",
+            "tqdm",
+            "vectorbt",
+            "yfinance>=0.2.36",
         ],
         "test": [
             "numba>=0.59.0",
-            "numpy==1.26.4",
+            "numpy>=1.26.4",
             "pandas>=2.2.0",
             "pandas_datareader>=0.10.0",
             "pytest==7.1.2",
             "TA-Lib>=0.4.28",
-            "yfinance>=0.2.36"
+            "yfinance>=0.2.36",
         ],
     },
 )

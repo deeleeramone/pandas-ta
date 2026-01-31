@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    nb_idiff,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import nb_idiff, v_offset, v_pos_default, v_series, v_talib
 
 
 @njit(cache=True)
@@ -19,8 +12,11 @@ def nb_mom(x, n):
 
 
 def mom(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Momentum (MOM)
 
@@ -56,6 +52,7 @@ def mom(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import MOM
+
         mom = MOM(close, length)
     else:
         np_close = close.values
@@ -68,7 +65,7 @@ def mom(
 
     # Fill
     if "fillna" in kwargs:
-        mom.fillna(kwargs["fillna"], inplace=True)
+        mom = mom.fillna(kwargs["fillna"])
 
     # Name and Category
     mom.name = f"MOM_{length}"

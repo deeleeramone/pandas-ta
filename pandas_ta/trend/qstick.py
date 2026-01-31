@@ -2,19 +2,16 @@
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.utils import (
-    non_zero_range,
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import non_zero_range, v_mamode, v_offset, v_pos_default, v_series
 
 
 def qstick(
-    open_: Series, close: Series, length: Int = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    close: Series,
+    length: Int = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Q Stick
 
@@ -58,7 +55,7 @@ def qstick(
 
     # Fill
     if "fillna" in kwargs:
-        qstick.fillna(kwargs["fillna"], inplace=True)
+        qstick = qstick.fillna(kwargs["fillna"])
 
     # Name and Category
     qstick.name = f"QS_{length}"

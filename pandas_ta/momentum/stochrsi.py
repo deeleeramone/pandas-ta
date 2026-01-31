@@ -2,7 +2,6 @@
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.maps import Imports
 from pandas_ta.momentum import rsi
 from pandas_ta.utils import (
     non_zero_range,
@@ -10,15 +9,20 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def stochrsi(
-    close: Series, length: Int = None, rsi_length: Int = None,
-    k: Int = None, d: Int = None, mamode: str = None,
-    talib: bool = None, offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    rsi_length: Int = None,
+    k: Int = None,
+    d: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Stochastic (STOCHRSI)
 
@@ -90,8 +94,8 @@ def stochrsi(
 
     # Fill
     if "fillna" in kwargs:
-        stochrsi_k.fillna(kwargs["fillna"], inplace=True)
-        stochrsi_d.fillna(kwargs["fillna"], inplace=True)
+        stochrsi_k = stochrsi_k.fillna(kwargs["fillna"])
+        stochrsi_d = stochrsi_d.fillna(kwargs["fillna"])
 
     # Name and Category
     _name = "STOCHRSI"

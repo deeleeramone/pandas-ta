@@ -5,13 +5,20 @@ from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_series
 from .roc import roc
 
 
-
 def kst(
-    close: Series, signal: Int = None,
-    roc1: Int = None, roc2: Int = None, roc3: Int = None, roc4: Int = None,
-    sma1: Int = None, sma2: Int = None, sma3: Int = None, sma4: Int = None,
+    close: Series,
+    signal: Int = None,
+    roc1: Int = None,
+    roc2: Int = None,
+    roc3: Int = None,
+    roc4: Int = None,
+    sma1: Int = None,
+    sma2: Int = None,
+    sma3: Int = None,
+    sma4: Int = None,
     drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """'Know Sure Thing' (KST)
 
@@ -80,8 +87,8 @@ def kst(
 
     # Fill
     if "fillna" in kwargs:
-        kst.fillna(kwargs["fillna"], inplace=True)
-        kst_signal.fillna(kwargs["fillna"], inplace=True)
+        kst = kst.fillna(kwargs["fillna"])
+        kst_signal = kst_signal.fillna(kwargs["fillna"])
 
     # Name and Category
     kst.name = f"KST_{roc1}_{roc2}_{roc3}_{roc4}_{sma1}_{sma2}_{sma3}_{sma4}"

@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
 from numpy import nan
-from numba import njit
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    v_bool,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series, v_talib
 
 
 def ema(
-    close: Series, length: Int = None,
-    talib: bool = None, presma: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    presma: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Exponential Moving Average (EMA)
 
@@ -63,12 +58,13 @@ def ema(
     # Calculate
     if Imports["talib"] and mode_tal and length > 1:
         from talib import EMA
+
         ema = EMA(close, length)
     else:
         if presma:  # TA Lib implementation
             close = close.copy()
             sma_nth = close.iloc[0:length].mean()
-            close.iloc[:length - 1] = nan
+            close.iloc[: length - 1] = nan
             close.iloc[length - 1] = sma_nth
         ema = close.ewm(span=length, adjust=adjust).mean()
 
@@ -78,7 +74,7 @@ def ema(
 
     # Fill
     if "fillna" in kwargs:
-        ema.fillna(kwargs["fillna"], inplace=True)
+        ema = ema.fillna(kwargs["fillna"])
 
     # Name and Category
     ema.name = f"EMA_{length}"

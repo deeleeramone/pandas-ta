@@ -5,10 +5,7 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_series
 
 
-
-def drawdown(
-    close: Series, offset: Int = None, **kwargs: DictLike
-) -> DataFrame:
+def drawdown(close: Series, offset: Int = None, **kwargs: DictLike) -> DataFrame:
     """Drawdown (DD)
 
     Drawdown is a peak-to-trough decline during a specific period for an
@@ -50,9 +47,9 @@ def drawdown(
 
     # Fill
     if "fillna" in kwargs:
-        dd.fillna(kwargs["fillna"], inplace=True)
-        dd_pct.fillna(kwargs["fillna"], inplace=True)
-        dd_log.fillna(kwargs["fillna"], inplace=True)
+        dd = dd.fillna(kwargs["fillna"])
+        dd_pct = dd_pct.fillna(kwargs["fillna"])
+        dd_log = dd_log.fillna(kwargs["fillna"])
 
     # Name and Category
     dd.name = "DD"

@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
-from pandas import DataFrame, RangeIndex, Timedelta, Series, concat, date_range
+from pandas import DataFrame, RangeIndex, Timedelta, Series, date_range
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 from .midprice import midprice
 
 
-
 def ichimoku(
-    high: Series, low: Series, close: Series,
-    tenkan: Int = None, kijun: Int = None, senkou: Int = None,
+    high: Series,
+    low: Series,
+    close: Series,
+    tenkan: Int = None,
+    kijun: Int = None,
+    senkou: Int = None,
     include_chikou: bool = True,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Ichimoku Kinkō Hyō (ichimoku)
 
@@ -85,9 +89,9 @@ def ichimoku(
 
     # Fill
     if "fillna" in kwargs:
-        span_a.fillna(kwargs["fillna"], inplace=True)
-        span_b.fillna(kwargs["fillna"], inplace=True)
-        chikou_span.fillna(kwargs["fillna"], inplace=True)
+        span_a = span_a.fillna(kwargs["fillna"])
+        span_b = span_b.fillna(kwargs["fillna"])
+        chikou_span = chikou_span.fillna(kwargs["fillna"])
 
     # Name and Category
     span_a.name = f"ISA_{tenkan}"
@@ -121,7 +125,7 @@ def ichimoku(
         _span_a.index = _span_b.index = ext_index
     else:
         df_freq = close.index.value_counts().mode()[0]
-        tdelta = Timedelta(df_freq, unit="d")
+        tdelta = Timedelta(df_freq, unit="D")
         new_dt = date_range(start=last + tdelta, periods=kijun, freq="B")
         spandf = DataFrame(index=new_dt, columns=[span_a.name, span_b.name])
         _span_a.index = _span_b.index = new_dt

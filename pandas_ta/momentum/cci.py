@@ -7,11 +7,15 @@ from pandas_ta.statistics import mad
 from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 
 
-
 def cci(
-    high: Series, low: Series, close: Series, length: Int = None,
-    c: IntFloat = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    c: IntFloat = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Commodity Channel Index (CCI)
 
@@ -53,6 +57,7 @@ def cci(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import CCI
+
         cci = CCI(high, low, close, length)
     else:
         typical_price = hlc3(high=high, low=low, close=close, talib=mode_tal)
@@ -67,7 +72,7 @@ def cci(
 
     # Fill
     if "fillna" in kwargs:
-        cci.fillna(kwargs["fillna"], inplace=True)
+        cci = cci.fillna(kwargs["fillna"])
 
     # Name and Category
     cci.name = f"CCI_{length}_{c}"

@@ -5,11 +5,13 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import v_lowerbound, v_offset, v_series, v_talib
 
 
-
 def variance(
-    close: Series, length: Int = None,
-    ddof: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    ddof: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Rolling Variance
 
@@ -52,6 +54,7 @@ def variance(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import VAR
+
         variance = VAR(close, length)
     else:
         variance = close.rolling(length, min_periods=min_periods).var(ddof)
@@ -62,7 +65,7 @@ def variance(
 
     # Fill
     if "fillna" in kwargs:
-        variance.fillna(kwargs["fillna"], inplace=True)
+        variance = variance.fillna(kwargs["fillna"])
 
     # Name and Category
     variance.name = f"VAR_{length}"

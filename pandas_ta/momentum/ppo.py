@@ -11,15 +11,20 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def ppo(
-    close: Series, fast: Int = None, slow: Int = None, signal: Int = None,
-    scalar: IntFloat = None, mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    signal: Int = None,
+    scalar: IntFloat = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Percentage Price Oscillator (PPO)
 
@@ -65,6 +70,7 @@ def ppo(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import PPO
+
         ppo = PPO(close, fast, slow, tal_ma(mamode))
     else:
         fastma = ma(mamode, close, length=fast, talib=mode_tal)
@@ -85,9 +91,9 @@ def ppo(
 
     # Fill
     if "fillna" in kwargs:
-        ppo.fillna(kwargs["fillna"], inplace=True)
-        histogram.fillna(kwargs["fillna"], inplace=True)
-        signalma.fillna(kwargs["fillna"], inplace=True)
+        ppo = ppo.fillna(kwargs["fillna"])
+        histogram = histogram.fillna(kwargs["fillna"])
+        signalma = signalma.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{fast}_{slow}_{signal}"
@@ -96,11 +102,7 @@ def ppo(
     signalma.name = f"PPOs{_props}"
     ppo.category = histogram.category = signalma.category = "momentum"
 
-    data = {
-        ppo.name: ppo,
-        histogram.name: histogram,
-        signalma.name: signalma
-    }
+    data = {ppo.name: ppo, histogram.name: histogram, signalma.name: signalma}
     df = DataFrame(data, index=close.index)
     df.name = f"PPO{_props}"
     df.category = ppo.category

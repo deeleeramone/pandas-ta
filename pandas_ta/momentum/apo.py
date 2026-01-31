@@ -7,11 +7,14 @@ from pandas_ta.utils import tal_ma, v_mamode, v_offset
 from pandas_ta.utils import v_pos_default, v_series, v_talib
 
 
-
 def apo(
-    close: Series, fast: Int = None, slow: Int = None,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Absolute Price Oscillator (APO)
 
@@ -55,6 +58,7 @@ def apo(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import APO
+
         apo = APO(close, fast, slow, tal_ma(mamode))
     else:
         fastma = ma(mamode, close, length=fast, talib=mode_tal)
@@ -67,7 +71,7 @@ def apo(
 
     # Fill
     if "fillna" in kwargs:
-        apo.fillna(kwargs["fillna"], inplace=True)
+        apo = apo.fillna(kwargs["fillna"])
     # Name and Category
     apo.name = f"APO_{fast}_{slow}"
     apo.category = "momentum"

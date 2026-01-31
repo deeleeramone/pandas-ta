@@ -3,19 +3,17 @@ from numpy import nan
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.overlap import ema
-from pandas_ta.utils import (
-    non_zero_range,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import non_zero_range, v_offset, v_pos_default, v_series
 
 
 def stc(
-    close: Series, tclength: Int = None,
-    fast: Int = None, slow: Int = None, factor: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    tclength: Int = None,
+    fast: Int = None,
+    slow: Int = None,
+    factor: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Schaff Trend Cycle (STC)
 
@@ -111,13 +109,13 @@ def stc(
         xmacd = fastma - slowma
         pff, pf = schaff_tc(close, xmacd, tclength, factor)
 
-    pf[:_length - 1] = nan
+    pf[: _length - 1] = nan
 
     stc = Series(pff, index=close.index)
     macd = Series(xmacd, index=close.index)
     stoch = Series(pf, index=close.index)
 
-    stc.iloc[:_length - 1] = nan
+    stc.iloc[: _length - 1] = nan
 
     # Offset
     if offset != 0:
@@ -127,9 +125,9 @@ def stc(
 
     # Fill
     if "fillna" in kwargs:
-        stc.fillna(kwargs["fillna"], inplace=True)
-        macd.fillna(kwargs["fillna"], inplace=True)
-        stoch.fillna(kwargs["fillna"], inplace=True)
+        stc = stc.fillna(kwargs["fillna"])
+        macd = macd.fillna(kwargs["fillna"])
+        stoch = stoch.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{tclength}_{fast}_{slow}_{factor}"
@@ -138,11 +136,7 @@ def stc(
     stoch.name = f"STCstoch{_props}"
     stc.category = macd.category = stoch.category = "momentum"
 
-    data = {
-        stc.name: stc,
-        macd.name: macd,
-        stoch.name: stoch
-    }
+    data = {stc.name: stc, macd.name: macd, stoch.name: stoch}
     df = DataFrame(data, index=close.index)
     df.name = f"STC{_props}"
     df.category = stc.category
@@ -163,7 +157,9 @@ def schaff_tc(close, xmacd, tclength, factor):
     for i in range(1, m):
         # %Fast K of MACD
         if lowest_xmacd.iloc[i] > 0:
-            stoch1[i] = 100 * ((xmacd.iloc[i] - lowest_xmacd.iloc[i]) / xmacd_range.iloc[i])
+            stoch1[i] = 100 * (
+                (xmacd.iloc[i] - lowest_xmacd.iloc[i]) / xmacd_range.iloc[i]
+            )
         else:
             stoch1[i] = stoch1[i - 1]
         # Smoothed Calculation for % Fast D of MACD
@@ -172,11 +168,11 @@ def schaff_tc(close, xmacd, tclength, factor):
         # find min and max so far
         if i < tclength:
             # If there are not enough elements for a full tclength window, use what is available
-            lowest_pf = min(pf[:i+1])
-            highest_pf = max(pf[:i+1])
+            lowest_pf = min(pf[: i + 1])
+            highest_pf = max(pf[: i + 1])
         else:
-            lowest_pf = min(pf[i-tclength+1:i+1])
-            highest_pf = max(pf[i-tclength+1:i+1])
+            lowest_pf = min(pf[i - tclength + 1 : i + 1])
+            highest_pf = max(pf[i - tclength + 1 : i + 1])
 
         # Ensure non-zero range
         pf_range = highest_pf - lowest_pf if highest_pf - lowest_pf > 0 else 1

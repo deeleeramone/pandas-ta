@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*-
-from math import isnan
 from numpy import (
     clip,
     cumsum,
-    diff,
-    float64,
     int64,
-    isnan,
     nan,
-    nan_to_num,
     where,
-    zeros_like
 )
-from numba import njit
 from pandas import DataFrame, Series
+from pandas_ta._compat import njit
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import (
     nb_ffill,
     nb_idiff,
-    nb_shift,
     v_bool,
     v_int,
     v_offset,
     v_pos_default,
-    v_series
+    v_series,
 )
-
 
 
 @njit(cache=True)
@@ -55,10 +47,14 @@ def nb_exhc(x, n, cap, lb, ub, show_all):
 
 
 def exhc(
-    close: Series, length: Int = None,
-    cap: Int = None, asint: bool = None,
-    show_all: bool = None, nozeros: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    cap: Int = None,
+    asint: bool = None,
+    show_all: bool = None,
+    nozeros: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Exhaustion Count (EXHC)
 
@@ -108,16 +104,16 @@ def exhc(
     # Name and Category
     data = {
         "EXHC_DNa" if show_all else "EXHC_DN": dn,
-        "EXHC_UPa" if show_all else "EXHC_UP": up
+        "EXHC_UPa" if show_all else "EXHC_UP": up,
     }
     df = DataFrame(data, index=close.index)
     df.name = "EXHCa" if show_all else "EXHC"
     df.category = "momentum"
 
     if nozeros:
-        df.replace({0: nan}, inplace=True)
+        df = df.replace({0: nan})
 
-     # Offset
+    # Offset
     if offset != 0:
         df = df.shift(offset)
 

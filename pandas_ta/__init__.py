@@ -1,10 +1,12 @@
 """
 .. moduleauthor:: Kevin Johnson
 """
+
 name = "pandas_ta"
 
 # Dictionaries and version
 from pandas_ta.maps import EXCHANGE_TZ, RATE, Category, Imports, version
+from pandas_ta._compat import HAS_NUMBA
 from pandas_ta.utils import *
 from pandas_ta.utils import __all__ as utils_all
 
@@ -46,6 +48,7 @@ __all__ = [
     "RATE",
     "Category",
     "Imports",
+    "HAS_NUMBA",
     "version",
     "ma",
     "create_dir",

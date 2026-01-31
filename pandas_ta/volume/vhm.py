@@ -3,19 +3,17 @@ from statistics import pstdev
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.utils import (
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series
 
 
 def vhm(
-        volume: Series, length: Int = None, slength = None,
-        mamode: str = None, offset: Int = None, **kwargs: DictLike
-    ) -> Series:
+    volume: Series,
+    length: Int = None,
+    slength=None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
+) -> Series:
     """Volume Heatmap (VHM)
 
     Volume Heatmap is a volume indicator. It is used to indicate market/trend
@@ -68,7 +66,7 @@ def vhm(
 
     # Fill
     if "fillna" in kwargs:
-        vhm.fillna(kwargs["fillna"], inplace=True)
+        vhm = vhm.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"VHM_{length}"

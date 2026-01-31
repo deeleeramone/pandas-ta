@@ -3,20 +3,17 @@ from pandas import concat, DataFrame, Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
 from pandas_ta.overlap import ema
-from pandas_ta.utils import (
-    signals,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import signals, v_offset, v_pos_default, v_series, v_talib
 
 
 def macd(
-    close: Series, fast: Int = None, slow: Int = None,
-    signal: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    signal: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Moving Average Convergence Divergence (MACD)
 
@@ -65,19 +62,20 @@ def macd(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import MACD
+
         macd, signalma, histogram = MACD(close, fast, slow, signal)
     else:
         fastma = ema(close, length=fast, talib=mode_tal)
         slowma = ema(close, length=slow, talib=mode_tal)
 
         macd = fastma - slowma
-        macd_fvi = macd.loc[macd.first_valid_index():, ]
+        macd_fvi = macd.loc[macd.first_valid_index() :,]
         signalma = ema(close=macd_fvi, length=signal, talib=mode_tal)
         histogram = macd - signalma
 
     if as_mode:
         macd = macd - signalma
-        macd_fvi = macd.loc[macd.first_valid_index():, ]
+        macd_fvi = macd.loc[macd.first_valid_index() :,]
         signalma = ema(close=macd_fvi, length=signal, talib=mode_tal)
         histogram = macd - signalma
 
@@ -89,9 +87,9 @@ def macd(
 
     # Fill
     if "fillna" in kwargs:
-        macd.fillna(kwargs["fillna"], inplace=True)
-        histogram.fillna(kwargs["fillna"], inplace=True)
-        signalma.fillna(kwargs["fillna"], inplace=True)
+        macd = macd.fillna(kwargs["fillna"])
+        histogram = histogram.fillna(kwargs["fillna"])
+        signalma = signalma.fillna(kwargs["fillna"])
 
     # Name and Category
     _asmode = "AS" if as_mode else ""
@@ -101,11 +99,7 @@ def macd(
     signalma.name = f"MACD{_asmode}s{_props}"
     macd.category = histogram.category = signalma.category = "momentum"
 
-    data = {
-        macd.name: macd,
-        histogram.name: histogram,
-        signalma.name: signalma
-    }
+    data = {macd.name: macd, histogram.name: histogram, signalma.name: signalma}
     df = DataFrame(data, index=close.index)
     df.name = f"MACD{_asmode}{_props}"
     df.category = macd.category

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.maps import Imports
 from pandas_ta.utils import (
     nb_idiff,
@@ -10,10 +10,8 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
-from .mom import mom
-
 
 
 @njit(cache=True)
@@ -22,9 +20,12 @@ def nb_roc(x, n, k):
 
 
 def roc(
-    close: Series, length: Int = None,
-    scalar: IntFloat = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Rate of Change (ROC)
 
@@ -64,10 +65,11 @@ def roc(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import ROC
+
         roc = ROC(close, length)
     else:
         # roc = scalar * mom(close=close, length=length, talib=mode_tal) \
-            # / close.shift(length)
+        # / close.shift(length)
         np_close = close.values
         _roc = nb_roc(np_close, length, scalar)
         roc = Series(_roc, index=close.index)
@@ -78,7 +80,7 @@ def roc(
 
     # Fill
     if "fillna" in kwargs:
-        roc.fillna(kwargs["fillna"], inplace=True)
+        roc = roc.fillna(kwargs["fillna"])
 
     # Name and Category
     roc.name = f"ROC_{length}"

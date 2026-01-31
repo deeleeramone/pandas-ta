@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from numpy import cos, exp, nan, sqrt, zeros_like
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_offset, v_pos_default, v_series
-
 
 
 @njit(cache=True)
@@ -37,10 +36,14 @@ def np_reflex(x, n, k, alpha, pi, sqrt2):
 
 
 def reflex(
-    close: Series, length: Int = None,
-    smooth: Int = None, alpha: IntFloat = None,
-    pi: IntFloat = None, sqrt2: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    smooth: Int = None,
+    alpha: IntFloat = None,
+    pi: IntFloat = None,
+    sqrt2: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Reflex (reflex)
 
@@ -103,7 +106,7 @@ def reflex(
 
     # Fill
     if "fillna" in kwargs:
-        result.fillna(kwargs["fillna"], inplace=True)
+        result = result.fillna(kwargs["fillna"])
     # Name and Category
     result.name = f"REFLEX_{length}_{smooth}_{alpha}"
     result.category = "cycles"

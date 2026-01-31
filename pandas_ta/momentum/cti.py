@@ -5,10 +5,8 @@ from pandas_ta.overlap import linreg
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def cti(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """Correlation Trend Indicator (CTI)
 
@@ -47,7 +45,7 @@ def cti(
 
     # Fill
     if "fillna" in kwargs:
-        cti.fillna(method=kwargs["fillna"], inplace=True)
+        cti = cti.fillna(method=kwargs["fillna"])
 
     # Name and Category
     cti.name = f"CTI_{length}"

@@ -6,10 +6,12 @@ from pandas_ta.overlap import sma
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def ui(
-    close: Series, length: Int = None, scalar: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    scalar: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Ulcer Index (UI)
 
@@ -66,7 +68,7 @@ def ui(
 
     # Fill
     if "fillna" in kwargs:
-        ui.fillna(kwargs["fillna"], inplace=True)
+        ui = ui.fillna(kwargs["fillna"])
 
     # Name and Category
     ui.name = f"UI{'' if not everget else 'e'}_{length}"

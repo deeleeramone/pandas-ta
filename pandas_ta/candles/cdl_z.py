@@ -5,11 +5,16 @@ from pandas_ta.statistics import zscore
 from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series
 
 
-
 def cdl_z(
-    open_: Series, high: Series, low: Series, close: Series,
-    length: Int = None, full: bool = None, ddof: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    full: bool = None,
+    ddof: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Candle Type: Z
 
@@ -69,7 +74,7 @@ def cdl_z(
     df = DataFrame(data, index=close.index)
 
     if full:
-        df.fillna(method="backfill", axis=0, inplace=True)
+        df = df.bfill(axis=0)
 
     # Offset
     if offset != 0:
@@ -77,7 +82,7 @@ def cdl_z(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     # Name and Category
     df.name = f"CDL_Z{_props}"

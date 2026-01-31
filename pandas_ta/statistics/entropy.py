@@ -5,10 +5,12 @@ from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def entropy(
-    close: Series, length: Int = None, base: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    base: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Entropy (ENTP)
 
@@ -51,7 +53,7 @@ def entropy(
 
     # Fill
     if "fillna" in kwargs:
-        entropy.fillna(kwargs["fillna"], inplace=True)
+        entropy = entropy.fillna(kwargs["fillna"])
 
     # Name and Category
     entropy.name = f"ENTP_{length}"

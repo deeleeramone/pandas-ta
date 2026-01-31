@@ -6,11 +6,14 @@ from pandas_ta.utils import v_offset, v_pos_default, v_scalar, v_series
 from .tsi import tsi
 
 
-
 def smi(
-    close: Series, fast: Int = None, slow: Int = None,
-    signal: Int = None, scalar: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fast: Int = None,
+    slow: Int = None,
+    signal: Int = None,
+    scalar: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """SMI Ergodic Indicator (SMI)
 
@@ -76,9 +79,9 @@ def smi(
 
     # Fill
     if "fillna" in kwargs:
-        smi.fillna(kwargs["fillna"], inplace=True)
-        signalma.fillna(kwargs["fillna"], inplace=True)
-        osc.fillna(kwargs["fillna"], inplace=True)
+        smi = smi.fillna(kwargs["fillna"])
+        signalma = signalma.fillna(kwargs["fillna"])
+        osc = osc.fillna(kwargs["fillna"])
 
     # Name and Category
     # _scalar = f"_{scalar}" if scalar != 1 else ""

@@ -3,20 +3,17 @@ from numpy import isnan
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.overlap.ema import ema
-from pandas_ta.utils import (
-    v_drift,
-    v_offset,
-    v_pos_default,
-    v_scalar,
-    v_series
-)
-
+from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_scalar, v_series
 
 
 def trix(
-    close: Series, length: Int = None, signal: Int = None,
-    scalar: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    signal: Int = None,
+    scalar: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Trix (TRIX)
 
@@ -77,8 +74,8 @@ def trix(
 
     # Fill
     if "fillna" in kwargs:
-        trix.fillna(kwargs["fillna"], inplace=True)
-        trix_signal.fillna(kwargs["fillna"], inplace=True)
+        trix = trix.fillna(kwargs["fillna"])
+        trix_signal = trix_signal.fillna(kwargs["fillna"])
 
     # Name and Category
     trix.name = f"TRIX_{length}_{signal}"

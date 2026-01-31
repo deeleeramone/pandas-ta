@@ -11,14 +11,16 @@ from pandas_ta.utils import (
     v_pos_default,
     v_series,
     v_talib,
-    zero
+    zero,
 )
 
 
-
 def linreg(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Linear Regression Moving Average (linreg)
 
@@ -73,7 +75,14 @@ def linreg(
     np_close = close.to_numpy()
 
     if Imports["talib"] and mode_tal and not r:
-        from talib import LINEARREG, LINEARREG_ANGLE, LINEARREG_INTERCEPT, LINEARREG_SLOPE, TSF
+        from talib import (
+            LINEARREG,
+            LINEARREG_ANGLE,
+            LINEARREG_INTERCEPT,
+            LINEARREG_SLOPE,
+            TSF,
+        )
+
         if tsf:
             linreg = TSF(close, timeperiod=length)
         elif slope:
@@ -122,16 +131,13 @@ def linreg(
 
         if np_version >= "1.20.0":
             from numpy.lib.stride_tricks import sliding_window_view
+
             linreg_ = [
-                linear_regression(_) for _ in sliding_window_view(
-                    np_close, length)
+                linear_regression(_) for _ in sliding_window_view(np_close, length)
             ]
 
         else:
-            linreg_ = [
-                linear_regression(_) for _ in strided_window(
-                    np_close, length)
-            ]
+            linreg_ = [linear_regression(_) for _ in strided_window(np_close, length)]
 
         linreg = Series([nan] * (length - 1) + linreg_, index=close.index)
 
@@ -141,10 +147,10 @@ def linreg(
 
     # Fill
     if "fillna" in kwargs:
-        linreg.fillna(kwargs["fillna"], inplace=True)
+        linreg = linreg.fillna(kwargs["fillna"])
 
     # Name and Category
-    linreg.name = f"LINREG"
+    linreg.name = "LINREG"
     if slope:
         linreg.name += "m"
     if intercept:

@@ -63,11 +63,14 @@ def test_stdev(df):
             error_analysis(result, CORRELATION, ex)
 
 
-@mark.parametrize("length,stds,name,columns", [
-    (None, None, "TOS_STDEVALL", 7),
-    (30, None, "TOS_STDEVALL_30", 7),
-    (30, [1, 2], "TOS_STDEVALL_30", 5),
-])
+@mark.parametrize(
+    "length,stds,name,columns",
+    [
+        (None, None, "TOS_STDEVALL", 7),
+        (30, None, "TOS_STDEVALL_30", 7),
+        (30, [1, 2], "TOS_STDEVALL_30", 5),
+    ],
+)
 def test_tos_stdevall(df, length, stds, name, columns):
     result = ta.tos_stdevall(df.close, length=length, stds=stds)
     assert isinstance(result, DataFrame)
@@ -142,9 +145,12 @@ def test_ext_tos_stdevall(df):
     df.ta.tos_stdevall(append=True)
     columns = [
         "TOS_STDEVALL_LR",
-        "TOS_STDEVALL_L_1", "TOS_STDEVALL_U_1",
-        "TOS_STDEVALL_L_2", "TOS_STDEVALL_U_2",
-        "TOS_STDEVALL_L_3", "TOS_STDEVALL_U_3"
+        "TOS_STDEVALL_L_1",
+        "TOS_STDEVALL_U_1",
+        "TOS_STDEVALL_L_2",
+        "TOS_STDEVALL_U_2",
+        "TOS_STDEVALL_L_3",
+        "TOS_STDEVALL_U_3",
     ]
     assert list(df.columns[-7:]) == columns
 

@@ -5,21 +5,26 @@ from operator import mul
 from sys import float_info as sflt
 
 from numpy import (
-    all, append, array, corrcoef, dot, exp, fabs, float64,
-    log, nan, ndarray, ones, seterr, sign, sqrt, sum, triu,
-    zeros
+    all,
+    array,
+    corrcoef,
+    dot,
+    exp,
+    fabs,
+    log,
+    nan,
+    ndarray,
+    ones,
+    seterr,
+    sign,
+    sqrt,
+    sum,
+    triu,
+    zeros,
 )
 from pandas import DataFrame, Series
-from numba import njit
-from pandas_ta._typing import (
-    Array,
-    DictLike,
-    Float,
-    Int,
-    IntFloat,
-    List,
-    Optional
-)
+from pandas_ta._compat import njit
+from pandas_ta._typing import Array, DictLike, Float, Int, IntFloat, List, Optional
 from pandas_ta.maps import Imports
 from pandas_ta.utils._validate import v_series
 
@@ -40,10 +45,8 @@ __all__ = [
 ]
 
 
-
 def combination(
-    n: Int = 1, r: Int = 0,
-    repetition: bool = False, multichoose: bool = False
+    n: Int = 1, r: Int = 0, repetition: bool = False, multichoose: bool = False
 ) -> Int:
     """https://stackoverflow.com/questions/4941753/is-there-a-math-ncr-function-in-python"""
     n, r = int(fabs(n)), int(fabs(r))
@@ -59,6 +62,7 @@ def combination(
     numerator = reduce(mul, range(n, n - r, -1), 1)
     denominator = reduce(mul, range(1, r + 1), 1)
     return numerator // denominator
+
 
 def erf(x: IntFloat) -> Float:
     """Error Function erf(x)
@@ -78,8 +82,7 @@ def erf(x: IntFloat) -> Float:
 
     # A&S formula 7.1.26
     t = 1.0 / (1.0 + p * x)
-    y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2)
-               * t + a1) * t * exp(-x * x)
+    y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x * x)
     return x_sign * y  # erf(-x) = -erf(x)
 
 
@@ -202,14 +205,13 @@ def strided_window(x: Array, length: Int) -> Array:
     Pandas TA Issue: https://github.com/twopirllc/pandas-ta/issues/285
     """
     from numpy.lib.stride_tricks import as_strided
+
     strides = x.strides + (x.strides[-1],)
     shape = x.shape[:-1] + (x.shape[-1] - length + 1, length)
     return as_strided(x, shape=shape, strides=strides, writeable=False)
 
 
-def symmetric_triangle(
-    n: Int = None, weighted: bool = False
-) -> Optional[List[int]]:
+def symmetric_triangle(n: Int = None, weighted: bool = False) -> Optional[List[int]]:
     """Symmetric Triangle whenever n >= 2
 
     Returns a numpy array of the nth row of Symmetric Triangle.
@@ -240,8 +242,10 @@ def symmetric_triangle(
 
 def weights(w: Array):
     """Calculates the dot product of weights with values x"""
+
     def _dot(x):
         return dot(w, x)
+
     return _dot
 
 
@@ -255,8 +259,10 @@ def zero(x: IntFloat) -> IntFloat:
 
 
 def df_error_analysis(
-    A: DataFrame, B: DataFrame,
-    plot: bool = False, triangular: bool = False,
+    A: DataFrame,
+    B: DataFrame,
+    plot: bool = False,
+    triangular: bool = False,
     method: str = "pearson",
 ) -> DataFrame:
     """DataFrame Correlation Analysis helper"""
@@ -300,7 +306,9 @@ def _linear_regression_np(x: Series, y: Series) -> DictLike:
         _np_err = seterr()
         seterr(divide="ignore", invalid="ignore")
         result = {
-            "a": a, "b": b, "r": r,
+            "a": a,
+            "b": b,
+            "r": r,
             "t": r / sqrt((1 - r * r) / (m - 2)),
             "line": line,
         }
@@ -320,8 +328,10 @@ def _linear_regression_sklearn(x: Series, y: Series) -> DictLike:
     a, b = lr.intercept_, lr.coef_[0]
 
     result = {
-        "a": a, "b": b, "r": r,
+        "a": a,
+        "b": b,
+        "r": r,
         "t": r / sqrt((1 - r * r) / (x.size - 2)),
-        "line": a + b * x
+        "line": a + b * x,
     }
     return result

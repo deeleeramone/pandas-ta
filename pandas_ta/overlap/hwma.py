@@ -4,11 +4,13 @@ from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_offset, v_series
 
 
-
 def hwma(
     close: Series,
-    na: IntFloat = None, nb: IntFloat = None, nc: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    na: IntFloat = None,
+    nb: IntFloat = None,
+    nc: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """HWMA (Holt-Winter Moving Average)
 
@@ -65,7 +67,7 @@ def hwma(
 
     # Fill
     if "fillna" in kwargs:
-        hwma.fillna(kwargs["fillna"], inplace=True)
+        hwma = hwma.fillna(kwargs["fillna"])
 
     # Name and Category
     hwma.name = f"HWMA_{na}_{nb}_{nc}"

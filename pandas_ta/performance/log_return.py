@@ -5,10 +5,12 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series
 
 
-
 def log_return(
-    close: Series, length: Int = None, cumulative: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    cumulative: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Log Return
 
@@ -56,7 +58,7 @@ def log_return(
 
     # Fill
     if "fillna" in kwargs:
-        log_return.fillna(kwargs["fillna"], inplace=True)
+        log_return = log_return.fillna(kwargs["fillna"])
 
     # Name and Category
     log_return.name = f"{'CUM' if cumulative else ''}LOGRET_{length}"

@@ -11,16 +11,19 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def rsi(
-    close: Series, length: Int = None, scalar: IntFloat = None,
-    mamode: str = None, talib: bool = None,
-    drift: Int = None, offset: Int = None,
-    **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    mamode: str = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Relative Strength Index (RSI)
 
@@ -63,6 +66,7 @@ def rsi(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import RSI
+
         rsi = RSI(close, length)
     else:
         negative = close.diff(drift)
@@ -82,7 +86,7 @@ def rsi(
 
     # Fill
     if "fillna" in kwargs:
-        rsi.fillna(kwargs["fillna"], inplace=True)
+        rsi = rsi.fillna(kwargs["fillna"])
 
     # Name and Category
     rsi.name = f"RSI_{length}"

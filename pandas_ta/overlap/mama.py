@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from numpy import arctan, isnan, nan, zeros_like
-from numba import njit
 from pandas import DataFrame, Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.maps import Imports
 from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
-
 
 
 # Ehler's Mother of Adaptive Moving Averages
@@ -30,15 +29,23 @@ def nb_mama(x, fastlimit, slowlimit, prenan):
 
         # WMA(x,4) & Detrended WMA(x,4)
         wma4[i] = 0.4 * x[i] + 0.3 * x[i - 1] + 0.2 * x[i - 2] + 0.1 * x[i - 3]
-        dt[i] = adj_prev_period * (a * wma4[i] + b * wma4[i - 2] - b * wma4[i - 4] - a * wma4[i - 6])
+        dt[i] = adj_prev_period * (
+            a * wma4[i] + b * wma4[i - 2] - b * wma4[i - 4] - a * wma4[i - 6]
+        )
 
         # Quadrature(Detrender) and In Phase Component
-        q1[i] = adj_prev_period * (a * dt[i] + b * dt[i - 2] - b * dt[i - 4] - a * dt[i - 6])
+        q1[i] = adj_prev_period * (
+            a * dt[i] + b * dt[i - 2] - b * dt[i - 4] - a * dt[i - 6]
+        )
         i1[i] = dt[i - 3]
 
         # Phase Q1 and I1 by 90 degrees
-        ji[i] = adj_prev_period * (a * i1[i] + b * i1[i - 2] - b * i1[i - 4] - a * i1[i - 6])
-        jq[i] = adj_prev_period * (a * q1[i] + b * q1[i - 2] - b * q1[i - 4] - a * q1[i - 6])
+        ji[i] = adj_prev_period * (
+            a * i1[i] + b * i1[i - 2] - b * i1[i - 4] - a * i1[i - 6]
+        )
+        jq[i] = adj_prev_period * (
+            a * q1[i] + b * q1[i - 2] - b * q1[i - 4] - a * q1[i - 6]
+        )
 
         # Phasor Addition for 3 Bar Averaging
         i2[i] = i1[i] - jq[i]
@@ -94,9 +101,13 @@ def nb_mama(x, fastlimit, slowlimit, prenan):
 
 
 def mama(
-    close: Series, fastlimit: IntFloat = None, slowlimit: IntFloat = None,
-    prenan: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    fastlimit: IntFloat = None,
+    slowlimit: IntFloat = None,
+    prenan: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Ehler's MESA Adaptive Moving Average (MAMA)
 
@@ -146,6 +157,7 @@ def mama(
     np_close = close.to_numpy()
     if Imports["talib"] and mode_tal:
         from talib import MAMA
+
         mama, fama = MAMA(np_close, fastlimit, slowlimit)
     else:
         mama, fama = nb_mama(np_close, fastlimit, slowlimit, prenan)
@@ -167,6 +179,6 @@ def mama(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     return df

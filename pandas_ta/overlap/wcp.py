@@ -5,10 +5,13 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import v_offset, v_series, v_talib
 
 
-
 def wcp(
-    high: Series, low: Series, close: Series, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Weighted Closing Price (WCP)
 
@@ -47,6 +50,7 @@ def wcp(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import WCLPRICE
+
         wcp = WCLPRICE(high, low, close)
     else:
         weight = high.to_numpy() + low.to_numpy() + 2 * close.to_numpy()
@@ -58,7 +62,7 @@ def wcp(
 
     # Fill
     if "fillna" in kwargs:
-        wcp.fillna(kwargs["fillna"], inplace=True)
+        wcp = wcp.fillna(kwargs["fillna"])
 
     # Name and Category
     wcp.name = "WCP"

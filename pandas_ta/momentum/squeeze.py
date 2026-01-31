@@ -11,21 +11,27 @@ from pandas_ta.utils import (
     v_mamode,
     v_offset,
     v_pos_default,
-    v_series
+    v_series,
 )
 from pandas_ta.volatility import bbands, kc
 from .mom import mom
 
 
-
 def squeeze(
-    high: Series, low: Series, close: Series,
-    bb_length: Int = None, bb_std: IntFloat = None,
-    kc_length: Int = None, kc_scalar: IntFloat = None,
-    mom_length: Int = None, mom_smooth: Int = None,
-    use_tr: bool = None, mamode: str = None,
+    high: Series,
+    low: Series,
+    close: Series,
+    bb_length: Int = None,
+    bb_std: IntFloat = None,
+    kc_length: Int = None,
+    kc_scalar: IntFloat = None,
+    mom_length: Int = None,
+    mom_smooth: Int = None,
+    use_tr: bool = None,
+    mamode: str = None,
     prenan: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Squeeze (SQZ)
 
@@ -99,8 +105,7 @@ def squeeze(
     # Calculate
     bbd = bbands(close, length=bb_length, std=bb_std, mamode=mamode)
     kch = kc(
-        high, low, close, length=kc_length, scalar=kc_scalar,
-        mamode=mamode, tr=use_tr
+        high, low, close, length=kc_length, scalar=kc_scalar, mamode=mamode, tr=use_tr
     )
 
     # Simplify KC and BBAND column names for dynamic access
@@ -135,10 +140,10 @@ def squeeze(
 
     # Fill
     if "fillna" in kwargs:
-        squeeze.fillna(kwargs["fillna"], inplace=True)
-        squeeze_on.fillna(kwargs["fillna"], inplace=True)
-        squeeze_off.fillna(kwargs["fillna"], inplace=True)
-        no_squeeze.fillna(kwargs["fillna"], inplace=True)
+        squeeze = squeeze.fillna(kwargs["fillna"])
+        squeeze_on = squeeze_on.fillna(kwargs["fillna"])
+        squeeze_off = squeeze_off.fillna(kwargs["fillna"])
+        no_squeeze = no_squeeze.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = "" if use_tr else "hlr"
@@ -159,9 +164,9 @@ def squeeze(
 
     data = {
         squeeze.name: squeeze,
-        f"SQZ_ON": squeeze_on,
-        f"SQZ_OFF": squeeze_off,
-        f"SQZ_NO": no_squeeze
+        "SQZ_ON": squeeze_on,
+        "SQZ_OFF": squeeze_off,
+        "SQZ_NO": no_squeeze,
     }
     df = DataFrame(data, index=close.index)
     df.name = squeeze.name
@@ -180,30 +185,30 @@ def squeeze(
         neg_dec *= squeeze
         neg_inc *= squeeze
 
-        pos_inc.replace(0, nan, inplace=True)
-        pos_dec.replace(0, nan, inplace=True)
-        neg_dec.replace(0, nan, inplace=True)
-        neg_inc.replace(0, nan, inplace=True)
+        pos_inc = pos_inc.replace(0, nan)
+        pos_dec = pos_dec.replace(0, nan)
+        neg_dec = neg_dec.replace(0, nan)
+        neg_inc = neg_inc.replace(0, nan)
 
         sqz_inc = squeeze * increasing(squeeze)
         sqz_dec = squeeze * decreasing(squeeze)
-        sqz_inc.replace(0, nan, inplace=True)
-        sqz_dec.replace(0, nan, inplace=True)
+        sqz_inc = sqz_inc.replace(0, nan)
+        sqz_dec = sqz_dec.replace(0, nan)
 
         # Handle fills
         if "fillna" in kwargs:
-            sqz_inc.fillna(kwargs["fillna"], inplace=True)
-            sqz_dec.fillna(kwargs["fillna"], inplace=True)
-            pos_inc.fillna(kwargs["fillna"], inplace=True)
-            pos_dec.fillna(kwargs["fillna"], inplace=True)
-            neg_dec.fillna(kwargs["fillna"], inplace=True)
-            neg_inc.fillna(kwargs["fillna"], inplace=True)
+            sqz_inc = sqz_inc.fillna(kwargs["fillna"])
+            sqz_dec = sqz_dec.fillna(kwargs["fillna"])
+            pos_inc = pos_inc.fillna(kwargs["fillna"])
+            pos_dec = pos_dec.fillna(kwargs["fillna"])
+            neg_dec = neg_dec.fillna(kwargs["fillna"])
+            neg_inc = neg_inc.fillna(kwargs["fillna"])
 
-        df[f"SQZ_INC"] = sqz_inc
-        df[f"SQZ_DEC"] = sqz_dec
-        df[f"SQZ_PINC"] = pos_inc
-        df[f"SQZ_PDEC"] = pos_dec
-        df[f"SQZ_NDEC"] = neg_dec
-        df[f"SQZ_NINC"] = neg_inc
+        df["SQZ_INC"] = sqz_inc
+        df["SQZ_DEC"] = sqz_dec
+        df["SQZ_PINC"] = pos_inc
+        df["SQZ_PDEC"] = pos_dec
+        df["SQZ_NDEC"] = neg_dec
+        df["SQZ_NINC"] = neg_inc
 
     return df

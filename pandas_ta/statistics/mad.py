@@ -5,15 +5,13 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def mad_(series: Series):
     """Mean Absolute Deviation"""
     return fabs(series - series.mean()).mean()
 
 
 def mad(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """Rolling Mean Absolute Deviation
 
@@ -52,7 +50,7 @@ def mad(
 
     # Fill
     if "fillna" in kwargs:
-        mad.fillna(kwargs["fillna"], inplace=True)
+        mad = mad.fillna(kwargs["fillna"])
 
     # Name and Category
     mad.name = f"MAD_{length}"

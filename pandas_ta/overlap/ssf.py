@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from numpy import copy, cos, exp, zeros_like
-from numba import njit
+from numpy import copy, cos, exp
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series
-
 
 
 # Ehler's Super Smoother Filter
@@ -18,8 +17,9 @@ def nb_ssf(x, n, pi, sqrt2):
 
     # result[:2] = x[:2]
     for i in range(2, m):
-        result[i] = 0.5 * c * (x[i] + x[i - 1]) + b * result[i - 1] \
-            - a * a * result[i - 2]
+        result[i] = (
+            0.5 * c * (x[i] + x[i - 1]) + b * result[i - 1] - a * a * result[i - 2]
+        )
 
     return result
 
@@ -34,16 +34,23 @@ def nb_ssf_everget(x, n, pi, sqrt2):
 
     # result[:2] = x[:2]
     for i in range(2, m):
-        result[i] = 0.5 * (a * a - b + 1) * (x[i] + x[i - 1]) \
-            + b * result[i - 1] - a * a * result[i - 2]
+        result[i] = (
+            0.5 * (a * a - b + 1) * (x[i] + x[i - 1])
+            + b * result[i - 1]
+            - a * a * result[i - 2]
+        )
 
     return result
 
 
 def ssf(
-    close: Series, length: Int = None,
-    everget: bool = None, pi: IntFloat = None, sqrt2: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    everget: bool = None,
+    pi: IntFloat = None,
+    sqrt2: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Ehler's Super Smoother Filter (SSF) © 2013
 
@@ -110,7 +117,7 @@ def ssf(
 
     # Fill
     if "fillna" in kwargs:
-        ssf.fillna(kwargs["fillna"], inplace=True)
+        ssf = ssf.fillna(kwargs["fillna"])
 
     # Name and Category
     ssf.name = f"SSF{'e' if everget else ''}_{length}"

@@ -10,16 +10,20 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
-
 def stochf(
-    high: Series, low: Series, close: Series,
-    k: Int = None, d: Int = None,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    k: Int = None,
+    d: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Fast Stochastic (STOCHF)
 
@@ -66,15 +70,15 @@ def stochf(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import STOCHF
+
         stochf_ = STOCHF(high, low, close, k, d, tal_ma(mamode))
         stochf_k, stochf_d = stochf_[0], stochf_[1]
     else:
         lowest_low = low.rolling(k).min()
         highest_high = high.rolling(k).max()
 
-        stochf_k = 100 * (close - lowest_low) \
-            / non_zero_range(highest_high, lowest_low)
-        stochfk_fvi = stochf_k.loc[stochf_k.first_valid_index():, ]
+        stochf_k = 100 * (close - lowest_low) / non_zero_range(highest_high, lowest_low)
+        stochfk_fvi = stochf_k.loc[stochf_k.first_valid_index() :,]
         stochf_d = ma(mamode, stochfk_fvi, length=d, talib=mode_tal)
 
     # Offset
@@ -84,8 +88,8 @@ def stochf(
 
     # Fill
     if "fillna" in kwargs:
-        stochf_k.fillna(kwargs["fillna"], inplace=True)
-        stochf_d.fillna(kwargs["fillna"], inplace=True)
+        stochf_k = stochf_k.fillna(kwargs["fillna"])
+        stochf_d = stochf_d.fillna(kwargs["fillna"])
 
     # Name and Category
     _name = "STOCHF"

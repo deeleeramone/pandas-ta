@@ -6,11 +6,15 @@ from pandas_ta.overlap import hlc3
 from pandas_ta.utils import v_datetime_ordered, v_list, v_offset, v_series
 
 
-
 def vwap(
-    high: Series, low: Series, close: Series, volume: Series,
-    anchor: str = None, bands: List = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series,
+    anchor: str = None,
+    bands: List = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Volume Weighted Average Price (VWAP)
 
@@ -66,8 +70,7 @@ def vwap(
         anchor = "D"
 
     typical_price = hlc3(high=high, low=low, close=close)
-    if not v_datetime_ordered(volume) or \
-        not v_datetime_ordered(typical_price):
+    if not v_datetime_ordered(volume) or not v_datetime_ordered(typical_price):
         print("[!] VWAP requires an ordered DatetimeIndex.")
         return
 
@@ -75,16 +78,16 @@ def vwap(
     _props = f"VWAP_{anchor}"
     wp = typical_price * volume
     simplefilter(action="ignore", category=UserWarning)
-    vwap = wp.groupby(wp.index.to_period(anchor)).cumsum() \
+    vwap = (
+        wp.groupby(wp.index.to_period(anchor)).cumsum()
         / volume.groupby(volume.index.to_period(anchor)).cumsum()
+    )
 
     if bands and len(bands):
         # Calculate vwap stdev bands
         vwap_var = volume * (typical_price - vwap) ** 2
-        vwap_var_sum = vwap_var \
-            .groupby(vwap_var.index.to_period(anchor)).cumsum()
-        vwap_volume_sum = volume \
-            .groupby(volume.index.to_period(anchor)).cumsum()
+        vwap_var_sum = vwap_var.groupby(vwap_var.index.to_period(anchor)).cumsum()
+        vwap_volume_sum = volume.groupby(volume.index.to_period(anchor)).cumsum()
         std_volume_weighted = (vwap_var_sum / vwap_volume_sum) ** 0.5
 
     # Name and Category
@@ -93,12 +96,15 @@ def vwap(
 
     if bands:
         df = DataFrame({vwap.name: vwap}, index=close.index)
+        simplefilter(action="ignore", category=FutureWarning)
         for i in bands:
-            df[f"{_props}_L_{i}"] = vwap - i * std_volume_weighted
-            df[f"{_props}_U_{i}"] = vwap + i * std_volume_weighted
-            df[f"{_props}_L_{i}"].name = df[f"{_props}_U_{i}"].name = _props
-            df[f"{_props}_L_{i}"].category = "overlap"
-            df[f"{_props}_U_{i}"].category = "overlap"
+            lower_band = vwap - i * std_volume_weighted
+            upper_band = vwap + i * std_volume_weighted
+            lower_band.name = upper_band.name = _props
+            lower_band.category = upper_band.category = "overlap"
+            df[f"{_props}_L_{i}"] = lower_band
+            df[f"{_props}_U_{i}"] = upper_band
+        simplefilter(action="default", category=FutureWarning)
         df.name = _props
         df.category = "overlap"
 
@@ -111,9 +117,9 @@ def vwap(
     # Fill
     if "fillna" in kwargs:
         if bands and not df.empty:
-            df.fillna(kwargs["fillna"], inplace=True)
+            df = df.fillna(kwargs["fillna"])
         else:
-            vwap.fillna(kwargs["fillna"], inplace=True)
+            vwap = vwap.fillna(kwargs["fillna"])
 
     if bands and not df.empty:
         return df

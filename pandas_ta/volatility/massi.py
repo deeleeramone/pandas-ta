@@ -6,10 +6,13 @@ from pandas_ta.overlap import ema
 from pandas_ta.utils import non_zero_range, v_offset, v_pos_default, v_series
 
 
-
 def massi(
-    high: Series, low: Series, fast: Int = None, slow: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    fast: Int = None,
+    slow: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Mass Index (MASSI)
 
@@ -69,7 +72,7 @@ def massi(
 
     # Fill
     if "fillna" in kwargs:
-        massi.fillna(kwargs["fillna"], inplace=True)
+        massi = massi.fillna(kwargs["fillna"])
 
     # Name and Category
     massi.name = f"MASSI_{fast}_{slow}"

@@ -5,10 +5,12 @@ from pandas_ta.maps import Imports
 from pandas_ta.utils import signed_series, v_offset, v_series, v_talib
 
 
-
 def obv(
-    close: Series, volume: Series, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """On Balance Volume (OBV)
 
@@ -47,6 +49,7 @@ def obv(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import OBV
+
         obv = OBV(close, volume)
     else:
         sv = signed_series(close, initial=1) * volume
@@ -58,10 +61,10 @@ def obv(
 
     # Fill
     if "fillna" in kwargs:
-        obv.fillna(kwargs["fillna"], inplace=True)
+        obv = obv.fillna(kwargs["fillna"])
 
     # Name and Category
-    obv.name = f"OBV"
+    obv.name = "OBV"
     obv.category = "volume"
 
     return obv

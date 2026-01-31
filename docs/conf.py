@@ -5,8 +5,6 @@
 
 from os import path as os_path
 from sys import path as sys_path
-import sphinx_press_theme
-import sphinx.ext.autodoc
 
 sys_path.insert(0, os_path.abspath("../pandas_ta/"))
 # sys_path.append(os_path.abspath("../pandas_ta/"))
@@ -34,7 +32,7 @@ extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "autoapi.extension"
+    "autoapi.extension",
 ]
 
 templates_path = ["_templates"]

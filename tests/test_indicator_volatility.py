@@ -55,11 +55,13 @@ def test_bbands(df):
 
     try:
         expected = tal.BBANDS(df.close)
-        expecteddf = DataFrame({
-            "BBL_5_2.0": expected[2],
-            "BBM_5_2.0": expected[1],
-            "BBU_5_2.0": expected[0]
-        })
+        expecteddf = DataFrame(
+            {
+                "BBL_5_2.0": expected[2],
+                "BBM_5_2.0": expected[1],
+                "BBU_5_2.0": expected[0],
+            }
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
@@ -243,7 +245,9 @@ def test_ext_bbands(df):
 def test_ext_chandelier_exit(df):
     df.ta.chandelier_exit(append=True)
     columns = [
-        "CHDLREXTl_22_22_14_2.0", "CHDLREXTs_22_22_14_2.0", "CHDLREXTd_22_22_14_2.0"
+        "CHDLREXTl_22_22_14_2.0",
+        "CHDLREXTs_22_22_14_2.0",
+        "CHDLREXTd_22_22_14_2.0",
     ]
     assert list(df.columns[-3:]) == columns
 
@@ -287,8 +291,10 @@ def test_ext_rvi(df):
 def test_ext_thermo(df):
     df.ta.thermo(append=True)
     columns = [
-        "THERMO_20_2_0.5", "THERMOma_20_2_0.5",
-        "THERMOl_20_2_0.5", "THERMOs_20_2_0.5"
+        "THERMO_20_2_0.5",
+        "THERMOma_20_2_0.5",
+        "THERMOl_20_2_0.5",
+        "THERMOs_20_2_0.5",
     ]
     assert list(df.columns[-4:]) == columns
 

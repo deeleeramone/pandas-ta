@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
+from warnings import simplefilter
+
 from numpy import greater, nan, zeros_like
-from numba import njit
 from pandas import DataFrame, DateOffset, Series, infer_freq
+from pandas_ta._compat import njit
 from pandas_ta._typing import DictLike
-from pandas_ta.utils import (
-    nb_non_zero_range,
-    v_datetime_ordered,
-    v_series,
-    v_str
-)
+from pandas_ta.utils import nb_non_zero_range, v_datetime_ordered, v_series, v_str
 
 # Support for Pandas v1.4.x and v2.2.x
 td_mapping = {
-    'Y': 'years',
-    'YE': 'years',
-    'M': 'months',
-    'ME': 'months',
-    'D': 'days',
+    "Y": "years",
+    "YE": "years",
+    "M": "months",
+    "ME": "months",
+    "D": "days",
 }
-
 
 
 @njit(cache=True)
@@ -99,7 +95,7 @@ def pivot_traditional(high, low, close):
     s4 = tp - 2 * hl_range
 
     r1 = 2 * tp - low
-    r2 = tp +  hl_range
+    r2 = tp + hl_range
     r3 = tp + 2 * hl_range
     r4 = tp + 2 * hl_range
 
@@ -125,10 +121,13 @@ def pivot_woodie(open_, high, low):
 
 
 def pivots(
-    open_: Series, high: Series,
-    low: Series, close: Series,
-    method: str = None, anchor: str = None,
-    **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    method: str = None,
+    anchor: str = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Pivot Points
 
@@ -167,9 +166,7 @@ def pivots(
     if open_ is None or high is None or low is None or close is None:
         return None
 
-    methods = [
-        "traditional", "fibonacci", "woodie", "classic", "demark", "camarilla"
-    ]
+    methods = ["traditional", "fibonacci", "woodie", "classic", "demark", "camarilla"]
     method = v_str(method, methods[0])
 
     if close.index.size < 3:
@@ -194,14 +191,14 @@ def pivots(
                 "open": open_.resample(anchor).first(),
                 "high": high.resample(anchor).max(),
                 "low": low.resample(anchor).min(),
-                "close": close.resample(anchor).last()
+                "close": close.resample(anchor).last(),
             }
         )
-        df.dropna(inplace=True)
+        df = df.dropna()
     else:
         df = DataFrame(
             data={"open": open_, "high": high, "low": low, "close": close},
-            index=dt_index
+            index=dt_index,
         )
 
     np_open = df.open.to_numpy()
@@ -216,12 +213,10 @@ def pivots(
 
     # Calculate
     if method == "camarilla":
-        tp, s1, s2, s3, s4, r1, r2, r3, r4 = \
-            pivot_camarilla(np_high, np_low, np_close)
+        tp, s1, s2, s3, s4, r1, r2, r3, r4 = pivot_camarilla(np_high, np_low, np_close)
 
     elif method == "classic":
-        tp, s1, s2, s3, s4, r1, r2, r3, r4 = \
-            pivot_classic(np_high, np_low, np_close)
+        tp, s1, s2, s3, s4, r1, r2, r3, r4 = pivot_classic(np_high, np_low, np_close)
 
     elif method == "demark":
         tp, s1, r1 = pivot_demark(np_open, np_high, np_low, np_close)
@@ -230,20 +225,22 @@ def pivots(
         tp, s1, s2, s3, r1, r2, r3 = pivot_fibonacci(np_high, np_low, np_close)
 
     elif method == "woodie":
-        tp, s1, s2, s3, s4, r1, r2, r3, r4 = \
-            pivot_woodie(np_open, np_high, np_low)
+        tp, s1, s2, s3, s4, r1, r2, r3, r4 = pivot_woodie(np_open, np_high, np_low)
 
-    else: # Traditional
-        tp, s1, s2, s3, s4, r1, r2, r3, r4 = \
-            pivot_traditional(np_high, np_low, np_close)
+    else:  # Traditional
+        tp, s1, s2, s3, s4, r1, r2, r3, r4 = pivot_traditional(
+            np_high, np_low, np_close
+        )
 
     # Name and Category
     _props = f"PIVOTS_{method[:4].upper()}_{anchor}"
+    simplefilter(action="ignore", category=FutureWarning)
     df[f"{_props}_P"] = tp
     df[f"{_props}_S1"], df[f"{_props}_S2"] = s1, s2
     df[f"{_props}_S3"], df[f"{_props}_S4"] = s3, s4
     df[f"{_props}_R1"], df[f"{_props}_R2"] = r1, r2
     df[f"{_props}_R3"], df[f"{_props}_R4"] = r3, r4
+    simplefilter(action="default", category=FutureWarning)
 
     time_unit = td_mapping.get(anchor.upper(), None)
     if time_unit:
@@ -254,10 +251,10 @@ def pivots(
 
     if freq is not anchor:
         df = df.reindex(dt_index, method="ffill")
-    df = df.iloc[:,4:]
+    df = df.iloc[:, 4:]
 
     if method in ["demark", "fibonacci"]:
-        df.drop(columns=[x for x in df.columns if all(df[x].isna())], inplace=True)
+        df = df.drop(columns=[x for x in df.columns if all(df[x].isna())])
 
     df.name = _props
     df.category = "overlap"

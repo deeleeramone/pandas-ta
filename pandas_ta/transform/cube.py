@@ -5,10 +5,12 @@ from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_int, v_lowerbound, v_offset, v_series
 
 
-
 def cube(
-    close: Series, pwr: IntFloat = None, signal_offset: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    pwr: IntFloat = None,
+    signal_offset: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """
     Indicator: Cube Transform
@@ -46,7 +48,7 @@ def cube(
     offset = v_offset(offset)
 
     # Calculate
-    result = close ** pwr
+    result = close**pwr
     ct = Series(result, index=close.index)
     ct_signal = Series(result, index=close.index)
 
@@ -63,8 +65,8 @@ def cube(
 
     # Fill
     if "fillna" in kwargs:
-        ct.fillna(kwargs["fillna"], inplace=True)
-        ct_signal.fillna(kwargs["fillna"], inplace=True)
+        ct = ct.fillna(kwargs["fillna"])
+        ct_signal = ct_signal.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{pwr}_{signal_offset}"

@@ -8,17 +8,21 @@ from pandas_ta.utils import (
     v_mamode,
     v_offset,
     v_pos_default,
-    v_series
+    v_series,
 )
 from .true_range import true_range
 
 
-
 def kc(
-    high: Series, low: Series, close: Series,
-    length: Int = None, scalar: IntFloat = None,
-    tr: bool = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    tr: bool = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Keltner Channels (KC)
 
@@ -77,9 +81,9 @@ def kc(
 
     # Fill
     if "fillna" in kwargs:
-        lower.fillna(kwargs["fillna"], inplace=True)
-        basis.fillna(kwargs["fillna"], inplace=True)
-        upper.fillna(kwargs["fillna"], inplace=True)
+        lower = lower.fillna(kwargs["fillna"])
+        basis = basis.fillna(kwargs["fillna"])
+        upper = upper.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"{mamode.lower()[0] if len(mamode) else ''}_{length}_{scalar}"

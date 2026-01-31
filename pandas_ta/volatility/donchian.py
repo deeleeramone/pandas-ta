@@ -4,11 +4,13 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def donchian(
-    high: Series, low: Series,
-    lower_length: Int = None, upper_length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    lower_length: Int = None,
+    upper_length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Donchian Channels (DC)
 
@@ -53,9 +55,9 @@ def donchian(
 
     # Fill
     if "fillna" in kwargs:
-        lower.fillna(kwargs["fillna"], inplace=True)
-        mid.fillna(kwargs["fillna"], inplace=True)
-        upper.fillna(kwargs["fillna"], inplace=True)
+        lower = lower.fillna(kwargs["fillna"])
+        mid = mid.fillna(kwargs["fillna"])
+        upper = upper.fillna(kwargs["fillna"])
 
     # Offset
     if offset != 0:

@@ -7,10 +7,13 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series
 from .roc import roc
 
 
-
 def coppock(
-    close: Series, length: Int = None, fast: Int = None, slow: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    fast: Int = None,
+    slow: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Coppock Curve (COPC)
 
@@ -58,7 +61,7 @@ def coppock(
 
     # Fill
     if "fillna" in kwargs:
-        coppock.fillna(kwargs["fillna"], inplace=True)
+        coppock = coppock.fillna(kwargs["fillna"])
 
     # Name and Category
     coppock.name = f"COPC_{fast}_{slow}_{length}"

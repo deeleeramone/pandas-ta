@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from numpy import zeros_like
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_pos_default, v_series, v_str
-
 
 
 # Exponential Decay - https://tulipindicators.org/edecay
@@ -36,8 +35,11 @@ def nb_linear_decay(x, n):
 
 
 def decay(
-    close: Series, length: Int = None, mode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    mode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Decay
 
@@ -87,7 +89,7 @@ def decay(
 
     # Fill
     if "fillna" in kwargs:
-        result.fillna(kwargs["fillna"], inplace=True)
+        result = result.fillna(kwargs["fillna"])
 
     # Name and Category
     result.name = f"{_mode}DECAY_{length}"

@@ -5,14 +5,7 @@ from pandas import DataFrame, Series
 
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.utils import (
-    v_bool,
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import v_bool, v_mamode, v_offset, v_pos_default, v_series
 
 
 def sum_signed_rolling_deltas(
@@ -72,10 +65,17 @@ def sum_signed_rolling_deltas(
 
 
 def tmo(
-    open_: Series, close: Series,
-    tmo_length: Int = None, calc_length: Int = None, smooth_length: Int = None,
-    momentum: bool = False, normalize: bool = False, exclusive: bool = True,
-    mamode: str = None, offset: Int = None, **kwargs: DictLike,
+    open_: Series,
+    close: Series,
+    tmo_length: Int = None,
+    calc_length: Int = None,
+    smooth_length: Int = None,
+    momentum: bool = False,
+    normalize: bool = False,
+    exclusive: bool = True,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """True Momentum Oscillator (TMO)
 
@@ -175,10 +175,10 @@ def tmo(
 
     # Fill
     if "fillna" in kwargs:
-        main.fillna(kwargs["fillna"], inplace=True)
-        smooth.fillna(kwargs["fillna"], inplace=True)
-        mom_main.fillna(kwargs["fillna"], inplace=True)
-        mom_smooth.fillna(kwargs["fillna"], inplace=True)
+        main = main.fillna(kwargs["fillna"])
+        smooth = smooth.fillna(kwargs["fillna"])
+        mom_main = mom_main.fillna(kwargs["fillna"])
+        mom_smooth = mom_smooth.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{tmo_length}_{calc_length}_{smooth_length}"

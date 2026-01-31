@@ -4,11 +4,14 @@ from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_bool, v_drift, v_int, v_offset, v_series
 
 
-
 def tsignals(
-    trend: Series, asbool: bool = None,
-    trend_reset: Int = None, trade_offset: Int = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    trend: Series,
+    asbool: bool = None,
+    trend_reset: Int = None,
+    trade_offset: Int = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Trend Signals
 
@@ -72,10 +75,10 @@ def tsignals(
         exits = exits.astype(bool)
 
     data = {
-        f"TS_Trends": trends,
-        f"TS_Trades": trades,
-        f"TS_Entries": entries,
-        f"TS_Exits": exits,
+        "TS_Trends": trends,
+        "TS_Trades": trades,
+        "TS_Entries": entries,
+        "TS_Exits": exits,
     }
     df = DataFrame(data, index=trends.index)
 
@@ -85,10 +88,10 @@ def tsignals(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     # Name and Category
-    df.name = f"TS"
+    df.name = "TS"
     df.category = "trend"
 
     return df

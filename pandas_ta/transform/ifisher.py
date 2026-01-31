@@ -6,11 +6,12 @@ from pandas_ta.utils import v_int, v_offset, v_scalar, v_series
 from .remap import remap
 
 
-
 def ifisher(
     close: Series,
-    amp: IntFloat = None, signal_offset: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    amp: IntFloat = None,
+    signal_offset: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """
     Indicator: Inverse Fisher Transform
@@ -79,8 +80,8 @@ def ifisher(
 
     # Fill
     if "fillna" in kwargs:
-        inv_fisher.fillna(kwargs["fillna"], inplace=True)
-        signal.fillna(kwargs["fillna"], inplace=True)
+        inv_fisher = inv_fisher.fillna(kwargs["fillna"])
+        signal = signal.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{amp}"

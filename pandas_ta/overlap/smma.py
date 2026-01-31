@@ -3,20 +3,16 @@ from numpy import nan
 from pandas import Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.utils import (
-    v_mamode,
-    v_offset,
-    v_pos_default,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series, v_talib
 
 
 def smma(
-    close: Series, length: Int = None,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """SMoothed Moving Average (SMMA)
 
@@ -66,8 +62,10 @@ def smma(
     # Calculate
     m = close.size
     smma = close.copy()
-    smma[:length - 1] = nan
-    smma.iloc[length - 1] = ma(mamode, close[0:length], length=length, talib=mode_tal).iloc[-1]
+    smma[: length - 1] = nan
+    smma.iloc[length - 1] = ma(
+        mamode, close[0:length], length=length, talib=mode_tal
+    ).iloc[-1]
 
     for i in range(length, m):
         smma.iat[i] = ((length - 1) * smma.iat[i - 1] + smma.iat[i]) / length
@@ -78,7 +76,7 @@ def smma(
 
     # Fill
     if "fillna" in kwargs:
-        smma.fillna(kwargs["fillna"], inplace=True)
+        smma = smma.fillna(kwargs["fillna"])
 
     # Name and Category
     smma.name = f"SMMA_{length}"

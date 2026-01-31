@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 from warnings import simplefilter
 
-from numpy import array_split, mean, sum
+from numpy import mean, sum
 from pandas import cut, concat, DataFrame, Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import signed_series, v_bool, v_pos_default, v_series
 
 
-
 def vp(
-    close: Series, volume: Series,
-    width: Int = None, sort: bool = None,
-    **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    width: Int = None,
+    sort: bool = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Volume Profile (VP)
 
@@ -76,33 +77,50 @@ def vp(
         vp[mean_price_col] = vp[close_col]
 
         vpdf = vp.groupby(
-            cut(vp[close_col], width, include_lowest=True, precision=2),
-            observed=False
-        ).agg({
-            mean_price_col: mean,
-            pos_volume_col: sum,
-            neg_volume_col: sum,
-            neut_volume_col: sum
-        })
+            cut(vp[close_col], width, include_lowest=True, precision=2), observed=False
+        ).agg(
+            {
+                mean_price_col: mean,
+                pos_volume_col: sum,
+                neg_volume_col: sum,
+                neut_volume_col: sum,
+            }
+        )
 
         vpdf[low_price_col] = [x.left for x in vpdf.index]
         vpdf[high_price_col] = [x.right for x in vpdf.index]
         vpdf = vpdf.reset_index(drop=True)
 
-        vpdf = vpdf[[
-            low_price_col, mean_price_col, high_price_col,
-            pos_volume_col, neg_volume_col, neut_volume_col
-        ]]
+        vpdf = vpdf[
+            [
+                low_price_col,
+                mean_price_col,
+                high_price_col,
+                pos_volume_col,
+                neg_volume_col,
+                neut_volume_col,
+            ]
+        ]
     else:
-        vp_ranges = array_split(vp, width)
-        result = list({
-            low_price_col: r[close_col].min(),
-            mean_price_col: r[close_col].mean(),
-            high_price_col: r[close_col].max(),
-            pos_volume_col: r[pos_volume_col].sum(),
-            neg_volume_col: r[neg_volume_col].sum(),
-            neut_volume_col: r[neut_volume_col].sum(),
-        } for r in vp_ranges)
+        # Split DataFrame into width chunks
+        chunk_size = len(vp) // width
+        vp_ranges = [vp.iloc[i : i + chunk_size] for i in range(0, len(vp), chunk_size)]
+        # Ensure we have exactly 'width' ranges
+        if len(vp_ranges) > width:
+            vp_ranges[-2] = concat([vp_ranges[-2], vp_ranges[-1]])
+            vp_ranges = vp_ranges[:-1]
+
+        result = list(
+            {
+                low_price_col: r[close_col].min(),
+                mean_price_col: r[close_col].mean(),
+                high_price_col: r[close_col].max(),
+                pos_volume_col: r[pos_volume_col].sum(),
+                neg_volume_col: r[neg_volume_col].sum(),
+                neut_volume_col: r[neut_volume_col].sum(),
+            }
+            for r in vp_ranges
+        )
 
         vpdf = DataFrame(result)
 
@@ -110,7 +128,7 @@ def vp(
 
     # Fill
     if "fillna" in kwargs:
-        vpdf.fillna(kwargs["fillna"], inplace=True)
+        vpdf = vpdf.fillna(kwargs["fillna"])
 
     # Name and Category
     vpdf.name = f"VP_{width}"

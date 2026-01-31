@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from numpy import copy, cos, exp, zeros_like
-from numba import njit
+from numpy import copy, cos, exp
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_offset, v_pos_default, v_series
-
 
 
 # John F. Ehler's Super Smoother Filter by Everget (3 poles), Tradingview
@@ -23,16 +22,20 @@ def nb_ssf3(x, n, pi, sqrt3):
 
     # result[:3] = x[:3]
     for i in range(3, m):
-        result[i] = d1 * x[i] + d2 * result[i - 1] \
-            + d3 * result[i - 2] + d4 * result[i - 3]
+        result[i] = (
+            d1 * x[i] + d2 * result[i - 1] + d3 * result[i - 2] + d4 * result[i - 3]
+        )
 
     return result
 
 
 def ssf3(
-    close: Series, length: Int = None,
-    pi: IntFloat = None, sqrt3: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    pi: IntFloat = None,
+    sqrt3: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ):
     """Ehler's 3 Pole Super Smoother Filter (SSF) © 2013
 
@@ -88,7 +91,7 @@ def ssf3(
 
     # Fill
     if "fillna" in kwargs:
-        ssf.fillna(kwargs["fillna"], inplace=True)
+        ssf = ssf.fillna(kwargs["fillna"])
 
     # Name and Category
     ssf.name = f"SSF3_{length}"

@@ -10,15 +10,19 @@ from pandas_ta.utils import (
     v_pos_default,
     v_series,
     v_talib,
-    zero
+    zero,
 )
 
 
-
 def dm(
-    high: Series, low: Series, length: Int = None,
-    mamode: str = None, talib: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    length: Int = None,
+    mamode: str = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Directional Movement (DM)
 
@@ -60,6 +64,7 @@ def dm(
 
     if Imports["talib"] and mode_tal and high.size and low.size:
         from talib import MINUS_DM, PLUS_DM
+
         pos = PLUS_DM(high, low, length)
         neg = MINUS_DM(high, low, length)
     else:
@@ -83,8 +88,8 @@ def dm(
 
     # Fill
     if "fillna" in kwargs:
-        pos.fillna(kwargs["fillna"], inplace=True)
-        neg.fillna(kwargs["fillna"], inplace=True)
+        pos = pos.fillna(kwargs["fillna"])
+        neg = neg.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}"

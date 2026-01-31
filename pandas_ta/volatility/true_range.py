@@ -3,21 +3,18 @@ from numpy import isnan, nan
 from pandas import concat, Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
-from pandas_ta.utils import (
-    non_zero_range,
-    v_bool,
-    v_drift,
-    v_offset,
-    v_series,
-    v_talib
-)
-
+from pandas_ta.utils import non_zero_range, v_bool, v_drift, v_offset, v_series, v_talib
 
 
 def true_range(
-    high: Series, low: Series, close: Series,
-    talib: bool = None, prenan: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    talib: bool = None,
+    prenan: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """True Range
 
@@ -61,6 +58,7 @@ def true_range(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import TRANGE
+
         true_range = TRANGE(high, low, close)
     else:
         hl_range = non_zero_range(high, low)
@@ -80,7 +78,7 @@ def true_range(
 
     # Fill
     if "fillna" in kwargs:
-        true_range.fillna(kwargs["fillna"], inplace=True)
+        true_range = true_range.fillna(kwargs["fillna"])
 
     # Name and Category
     true_range.name = f"TRUERANGE_{drift}"

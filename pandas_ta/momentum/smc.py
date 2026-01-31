@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sys import float_info as sflt
-from numpy import isnan, maximum, minimum, nan
+from numpy import maximum, minimum
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.ma import ma
@@ -11,16 +11,25 @@ from pandas_ta.utils import (
     v_pos_default,
     v_scalar,
     v_series,
-    v_talib
+    v_talib,
 )
 
 
 def smc(
-    open_: Series, high: Series, low: Series, close: Series,
-    abr_length: Int = None, close_length: Int = None, vol_length: Int = None,
-    percent: Int = None, vol_ratio: IntFloat = None, asint: bool = None,
-    mamode: str = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    abr_length: Int = None,
+    close_length: Int = None,
+    vol_length: Int = None,
+    percent: Int = None,
+    vol_ratio: IntFloat = None,
+    asint: bool = None,
+    mamode: str = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DictLike:
     """Smart Money Comcept (SMC)
 
@@ -86,7 +95,9 @@ def smc(
     top_imbalance_pct = 100 * top_imbalance / abr
     btm_imbalance_pct = 100 * btm_imbalance / abr
     hld = high - low + sflt.epsilon
-    high_volatility = hld > vol_ratio * ma(mamode, hld, length=vol_length, talib=mode_tal)
+    high_volatility = hld > vol_ratio * ma(
+        mamode, hld, length=vol_length, talib=mode_tal
+    )
 
     btm_imbalance_flag = (btm_imbalance > 0) & (btm_imbalance_pct > 1)
     top_imbalance_flag = (top_imbalance > 0) & (top_imbalance_pct > 1)
@@ -113,8 +124,8 @@ def smc(
         df = df.shift(offset)
 
     # Fill
-    df.ffill(inplace=True)
-    df.bfill(inplace=True)
+    df = df.ffill()
+    df = df.bfill()
 
     # Name and Category
     df.name = f"SMC{_props}"

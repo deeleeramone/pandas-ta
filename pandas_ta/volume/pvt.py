@@ -5,10 +5,12 @@ from pandas_ta.momentum import roc
 from pandas_ta.utils import v_drift, v_offset, v_series
 
 
-
 def pvt(
-    close: Series, volume: Series, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Price-Volume Trend (PVT)
 
@@ -51,10 +53,10 @@ def pvt(
 
     # Fill
     if "fillna" in kwargs:
-        pvt.fillna(kwargs["fillna"], inplace=True)
+        pvt = pvt.fillna(kwargs["fillna"])
 
     # Name and Category
-    pvt.name = f"PVT"
+    pvt.name = "PVT"
     pvt.category = "volume"
 
     return pvt

@@ -7,10 +7,12 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from .ema import ema
 
 
-
 def dema(
-    close: Series, length: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Double Exponential Moving Average (DEMA)
 
@@ -46,6 +48,7 @@ def dema(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import DEMA
+
         dema = DEMA(close, length)
     else:
         ema1 = ema(close=close, length=length, talib=mode_tal)
@@ -61,7 +64,7 @@ def dema(
 
     # Fill
     if "fillna" in kwargs:
-        dema.fillna(kwargs["fillna"], inplace=True)
+        dema = dema.fillna(kwargs["fillna"])
 
     # Name and Category
     dema.name = f"DEMA_{length}"

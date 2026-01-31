@@ -259,21 +259,24 @@ def test_mama(df):
 
     try:
         expected = tal.MAMA(df.close)
-        expecteddf = DataFrame({
-            "MAMA_0.5_0.05": expected[0],
-            "FAMA_0.5_0.05": expected[1]
-        })
+        expecteddf = DataFrame(
+            {"MAMA_0.5_0.05": expected[0], "FAMA_0.5_0.05": expected[1]}
+        )
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
-            mama_corr = ta.utils.df_error_analysis(result.iloc[:, 0], expecteddf.iloc[:, 0])
+            mama_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 0], expecteddf.iloc[:, 0]
+            )
             assert mama_corr > CORRELATION_THRESHOLD
             print(f"{mama_corr=}")
         except Exception as ex:
             error_analysis(result.iloc[:, 0], CORRELATION, ex)
 
         try:
-            fama_corr = ta.utils.df_error_analysis(result.iloc[:, 1], expecteddf.iloc[:, 1])
+            fama_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 1], expecteddf.iloc[:, 1]
+            )
             assert fama_corr > CORRELATION_THRESHOLD
             print(f"{fama_corr=}")
         except Exception as ex:
@@ -338,12 +341,18 @@ def test_ohlc4(df):
     assert result.name == "OHLC4"
 
 
-@mark.parametrize("method,name,columns", [
-    (None, "PIVOTS_TRAD_D", 9), ("camarilla", "PIVOTS_CAMA_D", 9),
-    ("classic", "PIVOTS_CLAS_D", 9), ("demark", "PIVOTS_DEMA_D", 3),
-    ("fibonacci", "PIVOTS_FIBO_D", 7), ("traditional", "PIVOTS_TRAD_D", 9),
-    ("woodie", "PIVOTS_WOOD_D", 9)
-])
+@mark.parametrize(
+    "method,name,columns",
+    [
+        (None, "PIVOTS_TRAD_D", 9),
+        ("camarilla", "PIVOTS_CAMA_D", 9),
+        ("classic", "PIVOTS_CLAS_D", 9),
+        ("demark", "PIVOTS_DEMA_D", 3),
+        ("fibonacci", "PIVOTS_FIBO_D", 7),
+        ("traditional", "PIVOTS_TRAD_D", 9),
+        ("woodie", "PIVOTS_WOOD_D", 9),
+    ],
+)
 def test_pivots(df, method, name, columns):
     result = ta.pivots(df.open, df.high, df.low, df.close, method=method)
     assert isinstance(result, DataFrame)

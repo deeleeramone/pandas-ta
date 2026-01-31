@@ -6,14 +6,12 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_series,
-    weights
+    weights,
 )
 
 
-
 def swma(
-    close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series, length: Int = None, offset: Int = None, **kwargs: DictLike
 ) -> Series:
     """Symmetric Weighted Moving Average (SWMA)
 
@@ -47,8 +45,7 @@ def swma(
 
     # Calculate
     triangle = symmetric_triangle(length, weighted=True)
-    swma = close.rolling(length, min_periods=length) \
-        .apply(weights(triangle), raw=True)
+    swma = close.rolling(length, min_periods=length).apply(weights(triangle), raw=True)
 
     # Offset
     if offset != 0:
@@ -56,7 +53,7 @@ def swma(
 
     # Fill
     if "fillna" in kwargs:
-        swma.fillna(kwargs["fillna"], inplace=True)
+        swma = swma.fillna(kwargs["fillna"])
 
     # Name and Category
     swma.name = f"SWMA_{length}"

@@ -23,7 +23,6 @@ __all__ = [
 ]
 
 
-
 def cagr(close: Series) -> IntFloat:
     """Compounded Annual Growth Rate
 
@@ -37,9 +36,7 @@ def cagr(close: Series) -> IntFloat:
     return ((end / start) ** (1 / total_time(close))) - 1
 
 
-def calmar_ratio(
-    close: Series, method: str = "percent", years: Int = 3
-) -> IntFloat:
+def calmar_ratio(close: Series, method: str = "percent", years: Int = 3) -> IntFloat:
     """The Calmar Ratio is the percent Max Drawdown Ratio 'typically' over
     the past three years.
 
@@ -52,7 +49,7 @@ def calmar_ratio(
     >>> result = ta.calmar_ratio(close, method="percent", years=3)
     """
     if years <= 0:
-        print(f"[!] calmar_ratio 'years' argument must be greater than zero.")
+        print("[!] calmar_ratio 'years' argument must be greater than zero.")
         return
     close = v_series(close)
 
@@ -101,7 +98,7 @@ def jensens_alpha(returns: Series, benchmark_returns: Series) -> IntFloat:
     returns = v_series(returns)
     benchmark_returns = v_series(benchmark_returns)
 
-    benchmark_returns.interpolate(inplace=True)
+    benchmark_returns = benchmark_returns.interpolate()
     return linear_regression(benchmark_returns, returns)["a"]
 
 
@@ -118,9 +115,7 @@ def log_max_drawdown(close: Series) -> IntFloat:
     return log_return - max_drawdown(close, method="log")
 
 
-def max_drawdown(
-    close: Series, method: str = None, all: bool = False
-) -> IntFloat:
+def max_drawdown(close: Series, method: str = None, all: bool = False) -> IntFloat:
     """Maximum Drawdown from close. Default: 'dollar'.
 
     Args:
@@ -133,13 +128,14 @@ def max_drawdown(
     >>> result = ta.max_drawdown(close, method="dollar", all=False)
     """
     from pandas_ta.performance import drawdown
+
     close = v_series(close)
     max_dd = drawdown(close).max()
 
     max_dd_ = {
         "dollar": max_dd.iloc[0],
         "percent": max_dd.iloc[1],
-        "log": max_dd.iloc[2]
+        "log": max_dd.iloc[2],
     }
     if all:
         return max_dd_
@@ -150,9 +146,12 @@ def max_drawdown(
 
 
 def optimal_leverage(
-    close: Series, benchmark_rate: IntFloat = 0.0,
+    close: Series,
+    benchmark_rate: IntFloat = 0.0,
     period: IntFloat = RATE["TRADING_DAYS_PER_YEAR"],
-    log: bool = False, capital: IntFloat = 1., **kwargs: DictLike
+    log: bool = False,
+    capital: IntFloat = 1.0,
+    **kwargs: DictLike,
 ) -> IntFloat:
     """Optimal Leverage of a series. NOTE: Incomplete. Do NOT use.
 
@@ -168,6 +167,7 @@ def optimal_leverage(
     >>> result = ta.optimal_leverage(close, benchmark_rate=0.0, log=False)
     """
     from pandas_ta.performance import log_return, percent_return
+
     close = v_series(close)
 
     use_cagr = kwargs.pop("use_cagr", False)
@@ -182,10 +182,11 @@ def optimal_leverage(
 
     mean_excess_return = period_mu - benchmark_rate
     # sharpe = mean_excess_return / period_std
-    opt_leverage = (period_std ** -2) * mean_excess_return
+    opt_leverage = (period_std**-2) * mean_excess_return
 
     amount = int(capital * opt_leverage)
     return amount
+
 
 def pure_profit_score(close: Series) -> IntFloat:
     """Pure Profit Score of a series.
@@ -203,9 +204,13 @@ def pure_profit_score(close: Series) -> IntFloat:
         return r * cagr(close)
     return 0.0
 
+
 def sharpe_ratio(
-    close: Series, benchmark_rate: IntFloat = 0.0, log: bool = False,
-    use_cagr: bool = False, period: IntFloat = RATE["TRADING_DAYS_PER_YEAR"]
+    close: Series,
+    benchmark_rate: IntFloat = 0.0,
+    log: bool = False,
+    use_cagr: bool = False,
+    period: IntFloat = RATE["TRADING_DAYS_PER_YEAR"],
 ) -> IntFloat:
     """Sharpe Ratio of a series.
 
@@ -222,12 +227,12 @@ def sharpe_ratio(
     >>> result = ta.sharpe_ratio(close, benchmark_rate=0.0, log=False)
     """
     from pandas_ta.performance import log_return, percent_return
+
     close = v_series(close)
     if log:
         returns = log_return(close=close)
     else:
         returns = percent_return(close=close)
-
 
     if use_cagr:
         return cagr(close) / volatility(close, returns, log=log)
@@ -235,6 +240,7 @@ def sharpe_ratio(
         period_mu = period * returns.mean()
         period_std = sqrt(period) * returns.std()
         return (period_mu - benchmark_rate) / period_std
+
 
 def sortino_ratio(
     close: Series, benchmark_rate: IntFloat = 0.0, log: bool = False
@@ -250,6 +256,7 @@ def sortino_ratio(
     >>> result = ta.sortino_ratio(close, benchmark_rate=0.0, log=False)
     """
     from pandas_ta.performance import log_return, percent_return
+
     close = v_series(close)
 
     if log:
@@ -260,9 +267,13 @@ def sortino_ratio(
     result = (cagr(close) - benchmark_rate) / downside_deviation(returns)
     return result
 
+
 def volatility(
-    close: Series, tf: str = "years", returns: bool = False,
-    log: bool = False, **kwargs: DictLike
+    close: Series,
+    tf: str = "years",
+    returns: bool = False,
+    log: bool = False,
+    **kwargs: DictLike,
 ) -> IntFloat:
     """Volatility of a series. Default: 'years'
 
@@ -279,6 +290,7 @@ def volatility(
     >>> result = ta.volatility(close, tf="years", returns=False, log=False)
     """
     from pandas_ta.performance import log_return, percent_return
+
     close = v_series(close)
 
     if not returns:

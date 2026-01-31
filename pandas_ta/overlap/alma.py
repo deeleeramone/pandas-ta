@@ -6,11 +6,13 @@ from pandas import Series
 from pandas_ta.utils import strided_window, v_offset, v_pos_default, v_series
 
 
-
 def alma(
-    close: Series, length: Int = None,
-    sigma: IntFloat = None, dist_offset: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    sigma: IntFloat = None,
+    dist_offset: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Arnaud Legoux Moving Average (ALMA)
 
@@ -63,11 +65,11 @@ def alma(
 
     if np_version >= "1.20.0":
         from numpy.lib.stride_tricks import sliding_window_view
+
         window = sliding_window_view(np_close, length)
     else:
         window = strided_window(np_close, length)
-    result = append(array([nan] * (length - 1)),
-                    tensordot(window, weights, axes=1))
+    result = append(array([nan] * (length - 1)), tensordot(window, weights, axes=1))
     alma = Series(result, index=close.index)
 
     # Offset
@@ -76,7 +78,7 @@ def alma(
 
     # Fill
     if "fillna" in kwargs:
-        alma.fillna(kwargs["fillna"], inplace=True)
+        alma = alma.fillna(kwargs["fillna"])
 
     # Name and Category
     alma.name = f"ALMA_{length}_{sigma}_{offset_}"

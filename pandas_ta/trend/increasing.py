@@ -7,15 +7,19 @@ from pandas_ta.utils import (
     v_drift,
     v_offset,
     v_pos_default,
-    v_series
+    v_series,
 )
 
 
-
 def increasing(
-    close: Series, length: Int = None, strict: bool = None,
-    asint: bool = None, percent: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    strict: bool = None,
+    asint: bool = None,
+    percent: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Increasing
 
@@ -59,9 +63,9 @@ def increasing(
         # Returns value as float64? Have to cast to bool
         increasing = close > close_.shift(drift)
         for x in range(3, length + 1):
-            increasing &= (close.shift(x - (drift + 1)) > close_.shift(x - drift))
+            increasing &= close.shift(x - (drift + 1)) > close_.shift(x - drift)
 
-        increasing.fillna(0, inplace=True)
+        increasing = increasing.fillna(0)
         increasing = increasing.astype(bool)
     else:
         increasing = close_.diff(length) > 0
@@ -75,10 +79,10 @@ def increasing(
 
     # Fill
     if "fillna" in kwargs:
-        increasing.fillna(kwargs["fillna"], inplace=True)
+        increasing = increasing.fillna(kwargs["fillna"])
 
     # Name and Category
-    _percent = f"_{0.01 * percent}" if percent else ''
+    _percent = f"_{0.01 * percent}" if percent else ""
     _props = f"{'S' if strict else ''}INC{'p' if percent else ''}"
     increasing.name = f"{_props}_{length}{_percent}"
     increasing.category = "trend"

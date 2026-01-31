@@ -8,12 +8,17 @@ from pandas_ta.utils import v_mamode, v_offset, v_pos_default, v_series
 from .obv import obv
 
 
-
 def aobv(
-    close: Series, volume: Series, fast: Int = None, slow: Int = None,
-    max_lookback: Int = None, min_lookback: Int = None,
-    mamode: str = None, run_length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    volume: Series,
+    fast: Int = None,
+    slow: Int = None,
+    max_lookback: Int = None,
+    min_lookback: Int = None,
+    mamode: str = None,
+    run_length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Archer On Balance Volume (AOBV)
 
@@ -84,11 +89,11 @@ def aobv(
 
     # Fill
     if "fillna" in kwargs:
-        obv_.fillna(kwargs["fillna"], inplace=True)
-        maf.fillna(kwargs["fillna"], inplace=True)
-        mas.fillna(kwargs["fillna"], inplace=True)
-        obv_long.fillna(kwargs["fillna"], inplace=True)
-        obv_short.fillna(kwargs["fillna"], inplace=True)
+        obv_ = obv_.fillna(kwargs["fillna"])
+        maf = maf.fillna(kwargs["fillna"])
+        mas = mas.fillna(kwargs["fillna"])
+        obv_long = obv_long.fillna(kwargs["fillna"])
+        obv_short = obv_short.fillna(kwargs["fillna"])
 
     _mode = mamode.lower()[0] if len(mamode) else ""
     data = {
@@ -98,7 +103,7 @@ def aobv(
         f"OBV{_mode}_{fast}": maf,
         f"OBV{_mode}_{slow}": mas,
         f"AOBV_LR_{run_length}": obv_long,
-        f"AOBV_SR_{run_length}": obv_short
+        f"AOBV_SR_{run_length}": obv_short,
     }
     df = DataFrame(data, index=close.index)
 

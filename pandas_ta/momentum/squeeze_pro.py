@@ -13,21 +13,28 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_scalar,
-    v_series
+    v_series,
 )
 from pandas_ta.volatility import bbands, kc
 
 
-
 def squeeze_pro(
-    high: Series, low: Series, close: Series,
-    bb_length: Int = None, bb_std: IntFloat = None,
-    kc_length: Int = None, kc_scalar_wide: IntFloat = None,
-    kc_scalar_normal: IntFloat = None, kc_scalar_narrow: IntFloat = None,
-    mom_length: Int = None, mom_smooth: Int = None,
-    use_tr: bool = None, mamode: str = None,
+    high: Series,
+    low: Series,
+    close: Series,
+    bb_length: Int = None,
+    bb_std: IntFloat = None,
+    kc_length: Int = None,
+    kc_scalar_wide: IntFloat = None,
+    kc_scalar_normal: IntFloat = None,
+    kc_scalar_narrow: IntFloat = None,
+    mom_length: Int = None,
+    mom_smooth: Int = None,
+    use_tr: bool = None,
+    mamode: str = None,
     prenan: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Squeeze PRO(SQZPRO)
 
@@ -95,8 +102,9 @@ def squeeze_pro(
     kc_scalar_normal = v_scalar(kc_scalar_normal, 1.5)
     kc_scalar_wide = v_scalar(kc_scalar_wide, 2)
     prenan = v_bool(prenan, False)
-    valid_kc_scaler = kc_scalar_wide > kc_scalar_normal \
-        and kc_scalar_normal > kc_scalar_narrow
+    valid_kc_scaler = (
+        kc_scalar_wide > kc_scalar_normal and kc_scalar_normal > kc_scalar_narrow
+    )
 
     if not valid_kc_scaler:
         return
@@ -111,16 +119,31 @@ def squeeze_pro(
     # Calculate
     bbd = bbands(close, length=bb_length, std=bb_std, mamode=mamode)
     kch_wide = kc(
-        high, low, close, length=kc_length, scalar=kc_scalar_wide,
-        mamode=mamode, tr=use_tr
+        high,
+        low,
+        close,
+        length=kc_length,
+        scalar=kc_scalar_wide,
+        mamode=mamode,
+        tr=use_tr,
     )
     kch_normal = kc(
-        high, low, close, length=kc_length, scalar=kc_scalar_normal,
-        mamode=mamode, tr=use_tr
+        high,
+        low,
+        close,
+        length=kc_length,
+        scalar=kc_scalar_normal,
+        mamode=mamode,
+        tr=use_tr,
     )
     kch_narrow = kc(
-        high, low, close, length=kc_length, scalar=kc_scalar_narrow,
-        mamode=mamode, tr=use_tr
+        high,
+        low,
+        close,
+        length=kc_length,
+        scalar=kc_scalar_narrow,
+        mamode=mamode,
+        tr=use_tr,
     )
 
     # Simplify KC and BBAND column names for dynamic access
@@ -150,12 +173,12 @@ def squeeze_pro(
 
     # Fill
     if "fillna" in kwargs:
-        squeeze.fillna(kwargs["fillna"], inplace=True)
-        squeeze_on_wide.fillna(kwargs["fillna"], inplace=True)
-        squeeze_on_normal.fillna(kwargs["fillna"], inplace=True)
-        squeeze_on_narrow.fillna(kwargs["fillna"], inplace=True)
-        squeeze_off_wide.fillna(kwargs["fillna"], inplace=True)
-        no_squeeze.fillna(kwargs["fillna"], inplace=True)
+        squeeze = squeeze.fillna(kwargs["fillna"])
+        squeeze_on_wide = squeeze_on_wide.fillna(kwargs["fillna"])
+        squeeze_on_normal = squeeze_on_normal.fillna(kwargs["fillna"])
+        squeeze_on_narrow = squeeze_on_narrow.fillna(kwargs["fillna"])
+        squeeze_off_wide = squeeze_off_wide.fillna(kwargs["fillna"])
+        no_squeeze = no_squeeze.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = "" if use_tr else "hlr"
@@ -179,11 +202,11 @@ def squeeze_pro(
 
     data = {
         squeeze.name: squeeze,
-        f"SQZPRO_ON_WIDE": squeeze_on_wide,
-        f"SQZPRO_ON_NORMAL": squeeze_on_normal,
-        f"SQZPRO_ON_NARROW": squeeze_on_narrow,
-        f"SQZPRO_OFF": squeeze_off_wide,
-        f"SQZPRO_NO": no_squeeze
+        "SQZPRO_ON_WIDE": squeeze_on_wide,
+        "SQZPRO_ON_NORMAL": squeeze_on_normal,
+        "SQZPRO_ON_NARROW": squeeze_on_narrow,
+        "SQZPRO_OFF": squeeze_off_wide,
+        "SQZPRO_NO": no_squeeze,
     }
     df = DataFrame(data, index=close.index)
     df.name = squeeze.name
@@ -202,30 +225,30 @@ def squeeze_pro(
         neg_dec *= squeeze
         neg_inc *= squeeze
 
-        pos_inc.replace(0, nan, inplace=True)
-        pos_dec.replace(0, nan, inplace=True)
-        neg_dec.replace(0, nan, inplace=True)
-        neg_inc.replace(0, nan, inplace=True)
+        pos_inc = pos_inc.replace(0, nan)
+        pos_dec = pos_dec.replace(0, nan)
+        neg_dec = neg_dec.replace(0, nan)
+        neg_inc = neg_inc.replace(0, nan)
 
         sqz_inc = squeeze * increasing(squeeze)
         sqz_dec = squeeze * decreasing(squeeze)
-        sqz_inc.replace(0, nan, inplace=True)
-        sqz_dec.replace(0, nan, inplace=True)
+        sqz_inc = sqz_inc.replace(0, nan)
+        sqz_dec = sqz_dec.replace(0, nan)
 
         # Fill
         if "fillna" in kwargs:
-            sqz_inc.fillna(kwargs["fillna"], inplace=True)
-            sqz_dec.fillna(kwargs["fillna"], inplace=True)
-            pos_inc.fillna(kwargs["fillna"], inplace=True)
-            pos_dec.fillna(kwargs["fillna"], inplace=True)
-            neg_dec.fillna(kwargs["fillna"], inplace=True)
-            neg_inc.fillna(kwargs["fillna"], inplace=True)
+            sqz_inc = sqz_inc.fillna(kwargs["fillna"])
+            sqz_dec = sqz_dec.fillna(kwargs["fillna"])
+            pos_inc = pos_inc.fillna(kwargs["fillna"])
+            pos_dec = pos_dec.fillna(kwargs["fillna"])
+            neg_dec = neg_dec.fillna(kwargs["fillna"])
+            neg_inc = neg_inc.fillna(kwargs["fillna"])
 
-        df[f"SQZPRO_INC"] = sqz_inc
-        df[f"SQZPRO_DEC"] = sqz_dec
-        df[f"SQZPRO_PINC"] = pos_inc
-        df[f"SQZPRO_PDEC"] = pos_dec
-        df[f"SQZPRO_NDEC"] = neg_dec
-        df[f"SQZPRO_NINC"] = neg_inc
+        df["SQZPRO_INC"] = sqz_inc
+        df["SQZPRO_DEC"] = sqz_dec
+        df["SQZPRO_PINC"] = pos_inc
+        df["SQZPRO_PDEC"] = pos_dec
+        df["SQZPRO_NDEC"] = neg_dec
+        df["SQZPRO_NINC"] = neg_inc
 
     return df

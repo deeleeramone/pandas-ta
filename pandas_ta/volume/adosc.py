@@ -7,12 +7,17 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from pandas_ta.volume import ad
 
 
-
 def adosc(
-    high: Series, low: Series, close: Series, volume: Series,
-    open_: Series = None, fast: Int = None, slow: Int = None,
+    high: Series,
+    low: Series,
+    close: Series,
+    volume: Series,
+    open_: Series = None,
+    fast: Int = None,
+    slow: Int = None,
     talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Accumulation/Distribution Oscillator or Chaikin Oscillator
 
@@ -59,6 +64,7 @@ def adosc(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import ADOSC
+
         adosc = ADOSC(high, low, close, volume, fast, slow)
     else:
         # remove length so it doesn't override ema length
@@ -66,8 +72,7 @@ def adosc(
             kwargs.pop("length")
 
         ad_ = ad(
-            high=high, low=low, close=close, volume=volume,
-            open_=open_, talib=mode_tal
+            high=high, low=low, close=close, volume=volume, open_=open_, talib=mode_tal
         )
         fast_ad = ema(close=ad_, length=fast, **kwargs, talib=mode_tal)
         slow_ad = ema(close=ad_, length=slow, **kwargs, talib=mode_tal)
@@ -79,7 +84,7 @@ def adosc(
 
     # Fill
     if "fillna" in kwargs:
-        adosc.fillna(kwargs["fillna"], inplace=True)
+        adosc = adosc.fillna(kwargs["fillna"])
 
     # Name and Category
     adosc.name = f"ADOSC_{fast}_{slow}"

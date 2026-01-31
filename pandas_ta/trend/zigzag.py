@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from numpy import floor, isnan, nan, zeros, zeros_like
-from numba import njit
+from numpy import floor, nan, zeros, zeros_like
 from pandas import Series, DataFrame
+from pandas_ta._compat import njit
 from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import (
     v_bool,
@@ -9,7 +9,6 @@ from pandas_ta.utils import (
     v_pos_default,
     v_series,
 )
-
 
 
 @njit(cache=True)
@@ -26,8 +25,8 @@ def nb_rolling_hl(np_high, np_low, window_size):
     for i in range(left, m - right):
         low_center = np_low[i]
         high_center = np_high[i]
-        low_window = np_low[i - left: i + right]
-        high_window = np_high[i - left: i + right]
+        low_window = np_low[i - left : i + right]
+        high_window = np_high[i - left : i + right]
 
         if (low_center <= low_window).all():
             idx[extremums] = i
@@ -124,14 +123,18 @@ def nb_map_zigzag(idx, swing, value, deviation, n):
     return swing_map, value_map, dev_map
 
 
-
 def zigzag(
-    high: Series, low: Series, close: Series = None,
-    legs: int = None, deviation: IntFloat = None,
-    retrace: bool = None, last_extreme: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series = None,
+    legs: int = None,
+    deviation: IntFloat = None,
+    retrace: bool = None,
+    last_extreme: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ):
-    """ Zigzag (ZIGZAG)
+    """Zigzag (ZIGZAG)
 
     Zigzag attempts to filter out smaller price movments while highlighting
     trend direction. It does not predict future trends, but it does identify
@@ -174,7 +177,7 @@ def zigzag(
         return
 
     if close is not None:
-        close = v_series(close,_length)
+        close = v_series(close, _length)
         np_close = close.values
         if close is None:
             return
@@ -198,13 +201,13 @@ def zigzag(
 
     # Fill
     if "fillna" in kwargs:
-        zz_swing.fillna(kwargs["fillna"], inplace=True)
-        zz_value.fillna(kwargs["fillna"], inplace=True)
-        zz_dev.fillna(kwargs["fillna"], inplace=True)
+        zz_swing = zz_swing.fillna(kwargs["fillna"])
+        zz_value = zz_value.fillna(kwargs["fillna"])
+        zz_dev = zz_dev.fillna(kwargs["fillna"])
     if "fill_method" in kwargs:
-        zz_swing.fillna(method=kwargs["fill_method"], inplace=True)
-        zz_value.fillna(method=kwargs["fill_method"], inplace=True)
-        zz_dev.fillna(method=kwargs["fill_method"], inplace=True)
+        zz_swing = zz_swing.fillna(method=kwargs["fill_method"])
+        zz_value = zz_value.fillna(method=kwargs["fill_method"])
+        zz_dev = zz_dev.fillna(method=kwargs["fill_method"])
 
     _props = f"_{deviation}%_{legs}"
     data = {

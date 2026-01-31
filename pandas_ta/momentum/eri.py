@@ -5,10 +5,13 @@ from pandas_ta.overlap import ema
 from pandas_ta.utils import v_offset, v_pos_default, v_series
 
 
-
 def eri(
-    high: Series, low: Series, close: Series, length: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Elder Ray Index (ERI)
 
@@ -60,8 +63,8 @@ def eri(
 
     # Fill
     if "fillna" in kwargs:
-        bull.fillna(kwargs["fillna"], inplace=True)
-        bear.fillna(kwargs["fillna"], inplace=True)
+        bull = bull.fillna(kwargs["fillna"])
+        bear = bear.fillna(kwargs["fillna"])
 
     # Name and Category
     bull.name = f"BULLP_{length}"

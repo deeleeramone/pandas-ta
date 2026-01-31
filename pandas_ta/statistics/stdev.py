@@ -7,11 +7,13 @@ from pandas_ta.utils import v_offset, v_pos_default, v_series, v_talib
 from .variance import variance
 
 
-
 def stdev(
-    close: Series, length: Int = None,
-    ddof: Int = None, talib: bool = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    ddof: Int = None,
+    talib: bool = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Rolling Standard Deviation
 
@@ -49,11 +51,12 @@ def stdev(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import STDDEV
+
         stdev = STDDEV(close, length)
     else:
-        stdev = variance(
-            close=close, length=length, ddof=ddof, talib=mode_tal
-        ).apply(sqrt)
+        stdev = variance(close=close, length=length, ddof=ddof, talib=mode_tal).apply(
+            sqrt
+        )
 
     # Offset
     if offset != 0:
@@ -61,7 +64,7 @@ def stdev(
 
     # Fill
     if "fillna" in kwargs:
-        stdev.fillna(kwargs["fillna"], inplace=True)
+        stdev = stdev.fillna(kwargs["fillna"])
 
     # Name and Category
     stdev.name = f"STDEV_{length}"

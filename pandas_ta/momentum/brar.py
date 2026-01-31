@@ -7,15 +7,20 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_scalar,
-    v_series
+    v_series,
 )
 
 
-
 def brar(
-    open_: Series, high: Series, low: Series, close: Series,
-    length: Int = None, scalar: IntFloat = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    scalar: IntFloat = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """BRAR (BRAR)
 
@@ -64,11 +69,13 @@ def brar(
     hcy[hcy < 0] = 0  # Zero negative values
     cyl[cyl < 0] = 0  # ""
 
-    ar = scalar * high_open_range.rolling(length).sum() \
+    ar = (
+        scalar
+        * high_open_range.rolling(length).sum()
         / open_low_range.rolling(length).sum()
+    )
 
-    br = scalar * hcy.rolling(length).sum() \
-        / cyl.rolling(length).sum()
+    br = scalar * hcy.rolling(length).sum() / cyl.rolling(length).sum()
 
     # Offset
     if offset != 0:
@@ -77,8 +84,8 @@ def brar(
 
     # Fill
     if "fillna" in kwargs:
-        ar.fillna(kwargs["fillna"], inplace=True)
-        br.fillna(kwargs["fillna"], inplace=True)
+        ar = ar.fillna(kwargs["fillna"])
+        br = br.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}"

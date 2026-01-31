@@ -10,18 +10,24 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_scalar,
-    v_series
+    v_series,
 )
 from pandas_ta.volatility import rvi
 
 
-
 def inertia(
-    close: Series, high: Series = None, low: Series = None,
-    length: Int = None, rvi_length: Int = None, scalar: IntFloat = None,
-    refined: bool = None, thirds: bool = None,
-    drift: Int = None, mamode: str = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    high: Series = None,
+    low: Series = None,
+    length: Int = None,
+    rvi_length: Int = None,
+    scalar: IntFloat = None,
+    refined: bool = None,
+    thirds: bool = None,
+    drift: Int = None,
+    mamode: str = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Inertia (INERTIA)
 
@@ -80,15 +86,25 @@ def inertia(
     if refined:
         _mode = "r"
         rvi_ = rvi(
-                    close, high=high, low=low, length=rvi_length,
-                    scalar=scalar, refined=refined, mamode=mamode
-                )
+            close,
+            high=high,
+            low=low,
+            length=rvi_length,
+            scalar=scalar,
+            refined=refined,
+            mamode=mamode,
+        )
     elif thirds:
         _mode = "t"
         rvi_ = rvi(
-                    close, high=high, low=low, length=rvi_length,
-                    scalar=scalar, thirds=thirds, mamode=mamode
-                )
+            close,
+            high=high,
+            low=low,
+            length=rvi_length,
+            scalar=scalar,
+            thirds=thirds,
+            mamode=mamode,
+        )
     else:
         _mode = ""
         rvi_ = rvi(close, length=rvi_length, scalar=scalar, mamode=mamode)
@@ -106,7 +122,7 @@ def inertia(
 
     # Fill
     if "fillna" in kwargs:
-        inertia.fillna(kwargs["fillna"], inplace=True)
+        inertia = inertia.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{rvi_length}"

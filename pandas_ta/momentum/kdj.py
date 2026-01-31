@@ -6,15 +6,18 @@ from pandas_ta.utils import (
     rma_pandas,
     v_offset,
     v_pos_default,
-    v_series
+    v_series,
 )
 
 
-
 def kdj(
-    high: Series, low: Series, close: Series,
-    length: Int = None, signal: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    signal: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """KDJ (KDJ)
 
@@ -59,8 +62,7 @@ def kdj(
     highest_high = high.rolling(length).max()
     lowest_low = low.rolling(length).min()
 
-    fastk = 100 * (close - lowest_low) / \
-        non_zero_range(highest_high, lowest_low)
+    fastk = 100 * (close - lowest_low) / non_zero_range(highest_high, lowest_low)
 
     k = rma_pandas(fastk, length=signal)
     d = rma_pandas(k, length=signal)
@@ -74,9 +76,9 @@ def kdj(
 
     # Fill
     if "fillna" in kwargs:
-        k.fillna(kwargs["fillna"], inplace=True)
-        d.fillna(kwargs["fillna"], inplace=True)
-        j.fillna(kwargs["fillna"], inplace=True)
+        k = k.fillna(kwargs["fillna"])
+        d = d.fillna(kwargs["fillna"])
+        j = j.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{length}_{signal}"

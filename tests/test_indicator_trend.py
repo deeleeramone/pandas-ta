@@ -10,30 +10,74 @@ from .config import CORRELATION, CORRELATION_THRESHOLD, error_analysis
 
 
 sample_adx_data = read_csv(
-    f"data/ADX_D.csv",
+    "data/ADX_D.csv",
     index_col=0,
     parse_dates=True,
     # date_format="%f"
-    date_format="%m/%d/%Y %I:%M:%S `%p"
+    date_format="%m/%d/%Y %I:%M:%S `%p",
 )
 
-expected_tv_adx = DataFrame({
-    "ADX_14": [
-        None, None, None, None, None, None,
-        None, None, None, None, None, None,
-        None, None, 9.874338, 10.408195, 10.799274,
-    ],
-    "DMP_14": [
-        None, 13.686598, 14.247809, 13.436449, 17.946530, 17.193874,
-        19.214901, 17.860325, 16.899406, 16.207983, 15.998908, 15.202702,
-        14.621306, 14.303707, 13.451093, 12.932243, 12.840198
-    ],
-    "DMN_14": [
-        None, 21.954010, 21.055379, 23.102292, 21.120552, 20.234781,
-        18.827331, 19.298744, 19.029033, 18.250478, 17.414460, 16.772558,
-        16.131126, 15.780731, 19.097781, 18.361121, 17.689287
-    ]
-})
+expected_tv_adx = DataFrame(
+    {
+        "ADX_14": [
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            9.874338,
+            10.408195,
+            10.799274,
+        ],
+        "DMP_14": [
+            None,
+            13.686598,
+            14.247809,
+            13.436449,
+            17.946530,
+            17.193874,
+            19.214901,
+            17.860325,
+            16.899406,
+            16.207983,
+            15.998908,
+            15.202702,
+            14.621306,
+            14.303707,
+            13.451093,
+            12.932243,
+            12.840198,
+        ],
+        "DMN_14": [
+            None,
+            21.954010,
+            21.055379,
+            23.102292,
+            21.120552,
+            20.234781,
+            18.827331,
+            19.298744,
+            19.029033,
+            18.250478,
+            17.414460,
+            16.772558,
+            16.131126,
+            15.780731,
+            19.097781,
+            18.361121,
+            17.689287,
+        ],
+    }
+)
 
 
 # TA Lib style Tests
@@ -65,8 +109,8 @@ def test_adx(df):
     assert result.name == "ADX_14"
 
     result = result.iloc[13:]
-    result.drop(result.columns[1], axis=1, inplace=True)
-    result.reset_index(drop=True, inplace=True)
+    result = result.drop(result.columns[1], axis=1)
+    result = result.reset_index(drop=True)
     pdt.assert_frame_equal(result, expected_tv_adx)
 
 
@@ -81,6 +125,7 @@ def test_amat(df):
     assert isinstance(result, DataFrame)
     assert result.name == "AMATe_8_21_2"
 
+
 def test_aroon(df):
     result = ta.aroon(df.high, df.low, talib=False)
     assert isinstance(result, DataFrame)
@@ -92,14 +137,18 @@ def test_aroon(df):
         pdt.assert_frame_equal(result, expecteddf)
     except AssertionError:
         try:
-            aroond_corr = ta.utils.df_error_analysis(result.iloc[:, 0], expected.iloc[:, 0])
+            aroond_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 0], expected.iloc[:, 0]
+            )
             print(f"{aroond_corr=}")
             assert aroond_corr > CORRELATION_THRESHOLD
         except Exception as ex:
             error_analysis(result.iloc[:, 0], CORRELATION, ex)
 
         try:
-            aroonu_corr = ta.utils.df_error_analysis(result.iloc[:, 1], expected.iloc[:, 1])
+            aroonu_corr = ta.utils.df_error_analysis(
+                result.iloc[:, 1], expected.iloc[:, 1]
+            )
             print(f"{aroonu_corr=}")
             assert aroonu_corr > CORRELATION_THRESHOLD
         except Exception as ex:
@@ -286,19 +335,18 @@ def test_zigzag(df):
     assert isinstance(result, DataFrame)
     assert result.name == "ZIGZAG_5.0%_10"
 
-    notna = result.iloc[:,0].notna()
-    high_pivotsdf = result[notna & (result["ZIGZAGs_5.0%_10"]==1)]
+    notna = result.iloc[:, 0].notna()
+    high_pivotsdf = result[notna & (result["ZIGZAGs_5.0%_10"] == 1)]
     assert isinstance(high_pivotsdf, DataFrame)
     assert high_pivotsdf.shape[0] == 1
 
-    low_pivotsdf  = result[notna & (result["ZIGZAGs_5.0%_10"]==-1)]
+    low_pivotsdf = result[notna & (result["ZIGZAGs_5.0%_10"] == -1)]
     assert isinstance(low_pivotsdf, DataFrame)
     assert low_pivotsdf.shape[0] == 1
 
     all_pivotsdf = result[notna]
     assert isinstance(all_pivotsdf, DataFrame)
     assert all_pivotsdf.shape[0] == low_pivotsdf.shape[0] + high_pivotsdf.shape[0]
-
 
 
 # DataFrame Extension Tests
@@ -383,10 +431,7 @@ def test_ext_long_run(df):
 
 def test_ext_psar(df):
     df.ta.psar(append=True)
-    expected = [
-        "PSARl_0.02_0.2", "PSARs_0.02_0.2",
-        "PSARaf_0.02_0.2", "PSARr_0.02_0.2"
-    ]
+    expected = ["PSARl_0.02_0.2", "PSARs_0.02_0.2", "PSARaf_0.02_0.2", "PSARr_0.02_0.2"]
     assert list(df.columns[-4:]) == expected
 
 
@@ -426,4 +471,8 @@ def test_ext_vortex(df):
 
 def test_ext_zigzag(df):
     df.ta.zigzag(append=True)
-    assert list(df.columns[-3:]) == ["ZIGZAGs_5.0%_10", "ZIGZAGv_5.0%_10", "ZIGZAGd_5.0%_10"]
+    assert list(df.columns[-3:]) == [
+        "ZIGZAGs_5.0%_10",
+        "ZIGZAGv_5.0%_10",
+        "ZIGZAGd_5.0%_10",
+    ]

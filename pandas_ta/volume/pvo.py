@@ -5,11 +5,14 @@ from pandas_ta.overlap import ema
 from pandas_ta.utils import v_offset, v_pos_default, v_scalar, v_series
 
 
-
 def pvo(
-    volume: Series, fast: Int = None, slow: Int = None,
-    signal: Int = None, scalar: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    volume: Series,
+    fast: Int = None,
+    slow: Int = None,
+    signal: Int = None,
+    scalar: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Percentage Volume Oscillator (PVO)
 
@@ -62,9 +65,9 @@ def pvo(
 
     # Fill
     if "fillna" in kwargs:
-        pvo.fillna(kwargs["fillna"], inplace=True)
-        histogram.fillna(kwargs["fillna"], inplace=True)
-        signalma.fillna(kwargs["fillna"], inplace=True)
+        pvo = pvo.fillna(kwargs["fillna"])
+        histogram = histogram.fillna(kwargs["fillna"])
+        signalma = signalma.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{fast}_{slow}_{signal}"

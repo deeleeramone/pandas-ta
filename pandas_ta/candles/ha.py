@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from numpy import empty_like, maximum, minimum
-from numba import njit
 from pandas import DataFrame, Series
-from pandas_ta._typing import Array, DictLike, Int
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_offset, v_series
-
 
 
 @njit(cache=True)
@@ -24,8 +23,12 @@ def np_ha(np_open, np_high, np_low, np_close):
 
 
 def ha(
-    open_: Series, high: Series, low: Series, close: Series,
-    offset: Int = None, **kwargs: DictLike
+    open_: Series,
+    high: Series,
+    low: Series,
+    close: Series,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """Heikin Ashi Candles (HA)
 
@@ -68,12 +71,15 @@ def ha(
     np_open, np_high = open_.to_numpy(), high.to_numpy()
     np_low, np_close = low.to_numpy(), close.to_numpy()
     ha_open, ha_high, ha_low, ha_close = np_ha(np_open, np_high, np_low, np_close)
-    df = DataFrame({
-        "HA_open": ha_open,
-        "HA_high": ha_high,
-        "HA_low": ha_low,
-        "HA_close": ha_close,
-    }, index=close.index)
+    df = DataFrame(
+        {
+            "HA_open": ha_open,
+            "HA_high": ha_high,
+            "HA_low": ha_low,
+            "HA_close": ha_close,
+        },
+        index=close.index,
+    )
 
     # Offset
     if offset != 0:
@@ -81,7 +87,7 @@ def ha(
 
     # Fill
     if "fillna" in kwargs:
-        df.fillna(kwargs["fillna"], inplace=True)
+        df = df.fillna(kwargs["fillna"])
 
     # Name and Category
     df.name = "Heikin-Ashi"

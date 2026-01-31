@@ -73,7 +73,12 @@ def test_ext_cdl_inside(df):
 
 def test_ext_cdl_z(df):
     df.ta.cdl_z(append=True)
-    assert list(df.columns[-4:]) == ["open_Z_30_1", "high_Z_30_1", "low_Z_30_1", "close_Z_30_1"]
+    assert list(df.columns[-4:]) == [
+        "open_Z_30_1",
+        "high_Z_30_1",
+        "low_Z_30_1",
+        "close_Z_30_1",
+    ]
 
 
 def test_ext_ha(df):

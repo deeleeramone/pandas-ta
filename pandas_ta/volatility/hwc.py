@@ -6,12 +6,16 @@ from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.utils import v_bool, v_offset, v_pos_default, v_series
 
 
-
 def hwc(
-    close: Series, scalar: IntFloat = None, channels: bool = None,
-    na: IntFloat = None, nb: IntFloat = None,
-    nc: IntFloat = None, nd: IntFloat = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    scalar: IntFloat = None,
+    channels: bool = None,
+    na: IntFloat = None,
+    nb: IntFloat = None,
+    nc: IntFloat = None,
+    nd: IntFloat = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> DataFrame:
     """HWC (Holt-Winter Channel)
 
@@ -67,8 +71,9 @@ def hwc(
         A = (1.0 - nc) * last_a + nc * (V - last_v)
         result.append((F + V + 0.5 * A))
 
-        var = (1.0 - nd) * last_var + \
-            nd * (last_price - last_result) * (last_price - last_result)
+        var = (1.0 - nd) * last_var + nd * (last_price - last_result) * (
+            last_price - last_result
+        )
         stddev = sqrt(last_var)
         upper.append(result[i] + scalar * stddev)
         lower.append(result[i] - scalar * stddev)
@@ -108,12 +113,12 @@ def hwc(
 
     # Fill
     if "fillna" in kwargs:
-        hwc.fillna(kwargs["fillna"], inplace=True)
-        hwc_upper.fillna(kwargs["fillna"], inplace=True)
-        hwc_lower.fillna(kwargs["fillna"], inplace=True)
+        hwc = hwc.fillna(kwargs["fillna"])
+        hwc_upper = hwc_upper.fillna(kwargs["fillna"])
+        hwc_lower = hwc_lower.fillna(kwargs["fillna"])
         if channels:
-            hwc_width.fillna(kwargs["fillna"], inplace=True)
-            hwc_pctwidth.fillna(kwargs["fillna"], inplace=True)
+            hwc_width = hwc_width.fillna(kwargs["fillna"])
+            hwc_pctwidth = hwc_pctwidth.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"_{scalar}"
@@ -128,14 +133,10 @@ def hwc(
             hwc_upper.name: hwc_upper,
             hwc_lower.name: hwc_lower,
             f"HWW{_props}": hwc_width,
-            f"HWPCT{_props}": hwc_pctwidth
+            f"HWPCT{_props}": hwc_pctwidth,
         }
     else:
-        data = {
-            hwc.name: hwc,
-            hwc_upper.name: hwc_upper,
-            hwc_lower.name: hwc_lower
-        }
+        data = {hwc.name: hwc, hwc_upper.name: hwc_upper, hwc_lower.name: hwc_lower}
     df = DataFrame(data, index=close.index)
     df.name = f"HWC_{scalar}"
     df.category = hwc.category

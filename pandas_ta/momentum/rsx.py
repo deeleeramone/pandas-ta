@@ -2,19 +2,15 @@
 from numpy import nan
 from pandas_ta._typing import DictLike, Int
 from pandas import concat, DataFrame, Series
-from pandas_ta.utils import (
-    signals,
-    v_drift,
-    v_offset,
-    v_pos_default,
-    v_series
-)
-
+from pandas_ta.utils import signals, v_drift, v_offset, v_pos_default, v_series
 
 
 def rsx(
-    close: Series, length: Int = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    close: Series,
+    length: Int = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """Relative Strength Xtra (rsx)
 
@@ -120,7 +116,7 @@ def rsx(
 
     # Fill
     if "fillna" in kwargs:
-        rsx.fillna(kwargs["fillna"], inplace=True)
+        rsx = rsx.fillna(kwargs["fillna"])
 
     # Name and Category
     rsx.name = f"RSX_{length}"
@@ -143,7 +139,7 @@ def rsx(
                     offset=offset,
                 ),
             ],
-            axis=1
+            axis=1,
         )
 
         return signalsdf

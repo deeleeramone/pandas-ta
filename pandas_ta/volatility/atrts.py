@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import isnan, nan, uintc, zeros_like
-from numba import njit
 from pandas import Series
-from pandas_ta._typing import Array, DictLike, Int, IntFloat
+from pandas_ta._compat import njit
+from pandas_ta._typing import DictLike, Int, IntFloat
 from pandas_ta.ma import ma as _ma
 from pandas_ta.maps import Imports
 from pandas_ta.utils import (
@@ -11,10 +11,9 @@ from pandas_ta.utils import (
     v_offset,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
 )
 from pandas_ta.volatility import atr
-
 
 
 @njit(cache=True)
@@ -49,10 +48,17 @@ def nb_atrts(x, ma, atr_, length, ma_length):
 
 
 def atrts(
-    high: Series, low: Series, close: Series, length: Int = None,
-    ma_length: Int = None, multiplier: IntFloat = None,
-    mamode: str = None, talib: bool = None, drift: Int = None,
-    offset: Int = None, **kwargs: DictLike
+    high: Series,
+    low: Series,
+    close: Series,
+    length: Int = None,
+    ma_length: Int = None,
+    multiplier: IntFloat = None,
+    mamode: str = None,
+    talib: bool = None,
+    drift: Int = None,
+    offset: Int = None,
+    **kwargs: DictLike,
 ) -> Series:
     """ATR Trailing Stop (ATRTS)
 
@@ -108,12 +114,19 @@ def atrts(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import ATR
+
         atr_ = ATR(high, low, close, length)
     else:
         atr_ = atr(
-            high=high, low=low, close=close, length=length,
-            mamode=mamode, drift=drift, talib=mode_tal,
-            offset=offset, **kwargs
+            high=high,
+            low=low,
+            close=close,
+            length=length,
+            mamode=mamode,
+            drift=drift,
+            talib=mode_tal,
+            offset=offset,
+            **kwargs,
         )
 
     if all(isnan(atr_)):
@@ -137,7 +150,7 @@ def atrts(
 
     # Fill
     if "fillna" in kwargs:
-        atrts.fillna(kwargs["fillna"], inplace=True)
+        atrts = atrts.fillna(kwargs["fillna"])
 
     # Name and Category
     _props = f"ATRTS{mamode[0]}{'p' if percent else ''}"
